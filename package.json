@@ -1,0 +1,14 @@
+{
+  "name": "vr-research",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "scripts": {
+    "start": "http-server -c-1"
+  },
+  "dependencies": {
+    "cytoscape": "^2.7.12",
+    "cytoscape-cose-bilkent": "^1.3.8",
+    "http-server": "^0.9.0"
+  }
+}

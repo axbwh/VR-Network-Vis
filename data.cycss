@@ -1,0 +1,196 @@
+.filtered {
+	display: none;
+}
+
+
+core {
+	active-bg-color: #fff;
+	active-bg-opacity: 0.333;
+}
+
+edge {
+	curve-style: haystack;
+	/*line-style: dotted;*/
+	/*haystack-radius: 0;*/
+	opacity: 0.2;
+	line-color: #fff;
+	width: 2;
+	z-index: 0;
+	overlay-opacity: 0;
+}
+
+edge.school {
+	line-color: #B6AB72;
+	line-style: solid;
+	z-index: 2;
+	opacity: 1;
+}
+
+edge[type = "collab"] {
+	opacity: 0.2;
+	line-color: #fff;
+	line-style: solid;
+	z-index: 1;
+}
+
+edge.project{
+	line-color: #287777;
+	line-style: solid;
+	opacity: 0.25;
+
+	curve-style: unbundled-bezier;
+	control-point-distances: 20;
+	control-point-weight:0.75;
+	edge-distances : node-position;
+	target-endpoint : outside-to-line;
+	target-arrow-color : #287777;
+	/*target-arrow-shape: circle;
+	target-arrow-fill : filled;*/
+
+}
+
+node {
+	width: 30;
+	height: 30;
+
+	font-family: roboto condensed, helvetica, sans serif;
+	font-size: 14;
+
+	text-margin-y : 1px;
+
+	font-weight: 300;
+	font-style: italic;
+
+	min-zoomed-font-size: 14;
+	content: data(name);
+
+	text-valign: center;
+	text-halign: center;
+
+	color: #fff;
+	background-color: #4A3247;
+
+	text-outline-width: 1;
+	text-outline-color: #1A2A39;
+	text-outline-opacity: 1;
+	overlay-color: #fff;
+}
+
+
+node[role = "Academic staff"] {
+background-color: #287777;
+}
+
+node[role = "Honours student"] {
+background-color: #4A3247;
+}
+
+node[role = "PhD student"] {
+background-color: #B6AB72;
+}
+
+node[role = "Masters student"] {
+background-color: #4489A3;
+}
+
+node[role = "General staff"] {
+background-color: #1B4966;
+}
+
+node.school {
+
+	font-weight: 600;
+	font-style: normal;
+	text-transform: uppercase;
+	text-margin-y : 1.5px;
+
+	border-width: 5px;
+	border-color: #B6AB72;
+	background-color: #1A2A39;
+
+	width: mapData(count, 1, 20, 30, 120);
+	height: mapData(count, 1, 20, 30, 120);
+	font-size: 15;
+}
+node.project {
+	text-margin-y : 1px;
+	font-weight: 300;
+	font-style: normal;
+	text-transform: uppercase;
+
+	text-valign: center;
+
+	background-color: #287777;
+	background-opacity : 0;
+	border-width: 2px;
+	border-color: #287777;
+
+	width: mapData(count, 1, 20, 30, 120);
+	height: mapData(count, 1, 20, 30, 120);
+}
+
+
+
+
+node[type = "center"] {
+opacity :0;
+}
+
+edge.faded {
+	opacity: 0.1;
+}
+
+node.faded {
+	opacity: 0.5;
+	text-opacity: 0;
+}
+
+node[type = "center"].faded {
+opacity :0;
+}
+
+node.hidden{
+	opacity : 0;
+}
+
+node.highlighted {
+	min-zoomed-font-size: 0;
+    	font-size: 10;
+    	text-outline-width: 2;
+    	text-outline-opacity: 1;
+    	z-index: 9999;
+    	line-color: #fff;
+    	opacity : 1;
+}
+
+node:selected {
+	width: 30;
+	height: 30;
+	border-color: #fff;
+	border-opacity: 1;
+	border-width: 4;
+	opacity : 1;
+}
+
+edge.hidden{
+	opacity: 0;
+}
+
+edge.highlighted {
+	opacity: 1;
+	width: 4;
+	/*z-index: 9999;*/
+}
+
+#titleKey {
+	font-weight: 400;
+	font-style: normal;
+	font-size: 25px;
+	text-transform: uppercase;
+	text-margin-y : 1.5px;
+
+	border-width: 0px;
+	background-color: #1A2A39;
+ }
+
+

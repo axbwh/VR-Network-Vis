@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
+
+  <title>VR Research at Victoria</title>
+  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" />
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <div id="cy"></div>
+  <div id="loading">
+    <span class="fa fa-refresh fa-spin"></span>
+  </div>
+
+  <div id="navbar">
+    <div id="controls">
+      <h>VIEW</h>
+
+      <div class ="checkbox-round">
+        <input id="showProjects" type="checkbox" checked/>
+        <label for="showProjects"></label>
+      </div>
+
+      <h2>Projects</h2>
+
+      <div class ="checkbox-round">
+      <input id="showSchools" type="checkbox" />
+      <label for="showSchools"></label>
+      </div>
+
+      <h2>Programme</h2>
+
+      <div class ="checkbox-round">
+      <input id="showCollab" type="checkbox" />
+      <label for="showCollab"></label>
+      </div>
+
+      <h2>Collaborators</h2>
+
+    </div>
+    <div id="toggle">
+    <h2>Show Details</h2>
+      <div class ="checkbox-round">
+        <input id="showInfo" type="checkbox" checked/>
+        <label for="showInfo"></label>
+      </div>
+    </div>
+  </div>
+
+  <div id="header"><a>VR RESEARCH AT VICTORIA</a><img src="img/vic-logo.svg"></div>
+
+  <div id="infoWrapper">
+    <div id="infoContainer" class="info">
+      <div class="container"></div>
+    </div>
+
+  </div>
+
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/bluebird/1.2.2/bluebird.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.3/fastclick.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.js"></script>
+  <script src="node_modules/cytoscape/dist/cytoscape.js"></script>
+  <script src="data.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
