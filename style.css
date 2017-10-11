@@ -9,12 +9,29 @@ html, body {
 
 #header{
  position: absolute;
- width: 20%;
- margin-top : 25px;
+ width: 350px;
  left: 40%;
- top: 0;
+ top: 25px;
  z-index: 4;
 }
+
+#header.stacked{
+ width: 125px;
+ top: 93px;
+ left: 50px;
+}
+
+#header.stacked > a{
+font-size: 18px;
+text-align: center;
+}
+
+#header.stacked > img{
+font-size: 18px;
+width: 50%;
+  margin-left : 25%;
+}
+
 
 #header > a{
   display: inline-block;
@@ -43,21 +60,27 @@ html, body {
 }
 
 #controls {
-  position: absolute;
+  position: relative;
+  display: inline-block;
   left: 50px;
+  top: 18px;
+  color : #fff;
+  text-transform: uppercase;
+}
+
+#toggle {
+  position: fixed;
+  display: inline-block;
+  float: right;
+  right: 20px;
   top: 18px;
   max-width: calc(100% - 2em);
   color : #fff;
   text-transform: uppercase;
 }
 
-#toggle {
-  position: absolute;
-  right: 20px;
-  top: 18px;
-  max-width: calc(100% - 2em);
-  color : #fff;
-  text-transform: uppercase;
+#toggle.stacked {
+   top: 93px;
 }
 
 #toggle .checkbox-round{
@@ -168,6 +191,10 @@ body.calc #loading {
   border-bottom: solid 1px #3D4452;
   border-left: solid 1px #3D4452;
   background-color: #1A2A39;
+}
+
+#infoWrapper .stacked{
+ top: 150px; 
 }
 
 #infoWrapper .info .container {

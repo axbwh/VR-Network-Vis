@@ -631,4 +631,9 @@ $("#showCollab").on('change', function() {
 $("#showInfo").on('change', function() {
   $("#infoWrapper").toggleClass("expanded")
 })
+
+$(window).on('resize', _.debounce(function () {
+    cy.fit(cy.elements().not('.hidden, .filtered'), layoutPadding);
+}, 250));
+
 });
