@@ -10,6 +10,7 @@
     var layoutDuration = 150;
     var collProject;
     var collSchool;
+    var maxZoom = 3;
 
     // get exported json from cytoscape desktop via ajax
     var graphP = loadData()
@@ -107,6 +108,8 @@
       }
       addKey.arrange = arrange;
     }
+
+
     function getId(url) {
       var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
       var match = url.match(regExp);
@@ -121,7 +124,6 @@
     function resizeIframe(){
     // Find all iframes
     var iFrames = $( "iframe" );
-    console.log("ratio = " + this.height)
   // Find &#x26; save the aspect ratio for all iframes
   iFrames.each(function () {
     $( this ).data( "ratio", this.height / this.width )
@@ -143,6 +145,32 @@
 $( this ).data( "ratio", this.height / this.width );
 }
 
+var getInitials = function (string, initNum, space) {
+  var names = string.split(' '),
+  initials = names[0].substring(0, 1).toUpperCase();
+
+  if(space == 1){
+  var kerning = " ";
+}else{
+  var kerning = "";
+}
+
+  if(names.length > 2){
+    for (var i = 1; i < names.length - 1; i++) {
+      initials += kerning + names[i].substring(0, 1).toUpperCase();
+    }
+    
+  }
+
+  if (names.length > 1) {
+    if(initNum == 1 || isNaN(names[names.length - 1]) == false){
+      initials += kerning + names[names.length - 1];
+    }else{
+      initials += kerning + names[names.length - 1].substring(0, 1).toUpperCase();
+    }
+  }
+  return initials;
+};
 
 function populateHtml(node){
   $("#infoWrapper").addClass("expanded");
@@ -162,15 +190,12 @@ function populateHtml(node){
 
   var infoTitle = $("#toggle h")
 
-  console.log( "toggleWidth = " + toggleWidth + " | infoTitle.width() = " + infoTitle.width() + " | infoContainer.width() = " + infoContainer.width() + " | computed = " + (infoContainer.width() - infoTitle.width()));
-
   if(infoTitle.width()+ toggleWidth < infoContainer.width()){
     infoTitle.css("padding-right", (infoContainer.width()  - (infoTitle.width()+toggleWidth)) - infoPadding);
   }
   if(videoLink){
 
     videoId = getId(videoLink);
-    console.log(videoId);
     infoContainer.append('<iframe width=1920 height=1080 src="//www.youtube.com/embed/' + videoId + '?&rel=0&showinfo=0&modestbranding=1&hd=1&autohide=1&color=white" frameborder="0" allowfullscreen></iframe>');
 
     resizeIframe();
@@ -206,8 +231,50 @@ function populateHtml(node){
         nhood.removeClass('faded').addClass('highlighted');
 
         var npos = node.position();
-        var w = window.innerWidth;
-        var h = window.innerHeight;
+        var w = cy.width();
+        var h = cy.height();
+
+
+
+        if($('#showInfo').prop('checked') == true){
+          cy.maxZoom(100);
+
+          var ogPan = Object.assign({}, cy.pan());
+          var ogZoom = cy.zoom();
+          console.log( ogPan);
+          
+          cy.stop().fit(nhood);   
+          var fitZoom = cy.zoom();
+
+          var infoWidth = $('#infoContainer').width();
+          var newWidth = w -  (infoWidth + layoutPadding*2);
+          var scaleFactor = newWidth/w;
+          var newZoom = fitZoom * scaleFactor;
+
+          console.log("| infoWidth = " + infoWidth);
+          cy.zoom(newZoom);
+          cy.center(nhood);
+          var centerPan = Object.assign({}, cy.pan());
+          console.log(centerPan);
+          console.log(ogPan);
+          cy.zoom(ogZoom);
+          cy.pan(ogPan);
+          console.log("centerPan");
+          console.log(centerPan);
+          console.log(ogPan);
+          cy.pan(centerPan);
+
+          cy.stop().animate({ //frames all elements
+            zoom : newZoom,
+            pan: {x : centerPan.x-(infoWidth/2), y: centerPan.y},
+          }, {
+            duration: layoutDuration
+          })
+
+          //cy.panBy({x : -(infoWidth/2), y: 0});
+
+       // cy.maxZoom(maxZoom);
+     }else{
 
          cy.stop().animate({ //frames all elements
           fit: {
@@ -217,7 +284,10 @@ function populateHtml(node){
         }, {
           duration: layoutDuration
         })
-       });
+       }
+
+
+     });
 
       //$("#infoWrapper .info .container").html(node.data('questionsHtml'));
 
@@ -270,7 +340,7 @@ function populateHtml(node){
       var nodeHeight = nhoodProjects.height();
       var maxLabelWidth = getMaxLabelWidth(nhoodProjects);
 
-      var gridWidth = (maxLabelWidth*nodeNum);
+      var gridWidth = (maxLabelWidth*nodeNum) + layoutPadding * (nodeNum+1);
 
       var layout = nhoodProjects.layout({
         name: 'grid',
@@ -380,11 +450,7 @@ function populateHtml(node){
 
       }
     }
-
-    console.log("schoolColumns = " +  schoolColumns);
-
     var schoolRows = Math.floor(schoolNum/schoolColumns);
-    console.log("schoolRows = " +  schoolRows);
 
     var schoolBB = { w : 0, h : 0};
 
@@ -397,32 +463,32 @@ function populateHtml(node){
         var nhood = node.closedNeighborhood();
         var npos = node.position();
 
-          var layout = nhood.layout({
-            name: 'concentric',
-            padding: 0,
-            avoidOverlap: false,
-            minNodeSpacing: 230,
-            boundingBox: {
-              x1: npos.x - cy.height() / 6,
-              y1: npos.y - cy.height() / 6,
-              x2: npos.x + cy.height() / 6,
-              y2: npos.y + cy.height() / 6,
-            },
-            nodeDimensionsIncludeLabels: false,
-            fit: false,
-            concentric: function( n ){
-              if( node.id() === n.id() ){
-                return 2;
-              } else {
-                return 1;
-              }
-            },
-            levelWidth: function(){
+        var layout = nhood.layout({
+          name: 'concentric',
+          padding: 0,
+          avoidOverlap: false,
+          minNodeSpacing: 230,
+          boundingBox: {
+            x1: npos.x - cy.height() / 6,
+            y1: npos.y - cy.height() / 6,
+            x2: npos.x + cy.height() / 6,
+            y2: npos.y + cy.height() / 6,
+          },
+          nodeDimensionsIncludeLabels: false,
+          fit: false,
+          concentric: function( n ){
+            if( node.id() === n.id() ){
+              return 2;
+            } else {
               return 1;
             }
-          });
-          layout.run();
+          },
+          levelWidth: function(){
+            return 1;
+          }
         });
+        layout.run();
+      });
 
       var maxRowSize = 0;
       var maxColSize = 0;
@@ -431,10 +497,8 @@ function populateHtml(node){
       for(i = 0; i < schoolRows; i++){
 
         var rowSize = 0;
-        console.log("row");
 
         for(j = i*schoolColumns ; j < i*schoolColumns + schoolColumns && j < schoolNum; j++){
-           console.log("schoolNodes[" + j + "] = " + schoolNodes[j].data('name') + " | width = " + schoolNodes[j].closedNeighborhood().boundingBox().w )
           rowSize += schoolNodes[j].closedNeighborhood().boundingBox().w;
 
         }
@@ -442,198 +506,233 @@ function populateHtml(node){
         if( rowSize > maxRowSize){
           maxRowSize = rowSize;
         }
-        console.log("rowSize = " + rowSize);
       }
-      console.log("maxRowSize = " + maxRowSize);
 
       for(i = 0; i < schoolColumns; i++){
 
         var colSize = 0;
 
         for(j = i ; j < schoolNum; j += schoolColumns){
-          console.log("schoolNodes[" + j + "] = " + schoolNodes[j].data('name') + " | height = " + schoolNodes[j].closedNeighborhood().boundingBox().h )
           colSize += schoolNodes[j].closedNeighborhood().boundingBox().h;
         }
 
         if( colSize > maxColSize){
           maxColSize = colSize;
         }
-        console.log("colSize = " + colSize);
 
       }
-      console.log("maxColSize = " + maxColSize);
 
       schoolBB.w = maxRowSize;
       schoolBB.h = maxColSize;
-}
+    }
 
-spreadSchools();
+    spreadSchools();
 
-var schoolWidth = schoolBB.w + (schoolColumns-1)*layoutPadding*2;
-var schoolHeight = schoolBB.h + (schoolRows-1)*layoutPadding*2;
-console.log("schoolWidth = " + schoolWidth + "schoolHeight = " + schoolHeight);
+    var schoolWidth = schoolBB.w + (schoolColumns-1)*layoutPadding*2;
+    var schoolHeight = schoolBB.h + (schoolRows-1)*layoutPadding*2;
 
-var schoolLayout = cy.elements('[type = "school"]').layout({
-  name: 'grid',
-  columns: schoolColumns,
-  boundingBox: { x1: 0, y1: 0, w: schoolWidth , h: schoolHeight }
-})
-
-schoolLayout.run();
-
-spreadSchools();
-
-addKey.arrange();
-clear();
-cy.$(':selected').forEach(highlight);
-cy.$(':selected').forEach(spreadProjects);
-cy.fit(cy.elements().not('.hidden, .filtered'), layoutPadding);
-}
-
-
-function drawCollab(){
-  clearStyles();
-  var elesHide = cy.elements('[type = "project"], [type = "school"]');
-  var elesFilter = cy.elements('[type = "project"]');
-
-  elesHide.addClass('hidden');
-  elesFilter.addClass('filtered');
-
-  var people = cy.nodes('[type = "person"]');
-
-  var layout = people.layout({
-    name: 'circle',
-    avoidOverlap : false,
-    padding: layoutPadding,
-    radius: paddedHeight / 2 ,
-    nodeDimensionsIncludeLabels: false,
-  });
-
-  layout.run();
-
-  cy.nodes().not(people).position({
-    x: cy.width()/2,
-    y: cy.height()/2,
-  });
-  addKey.arrange();
-  clear();
-  cy.$(':selected').forEach(highlight);
-  cy.fit(cy.elements().not('.hidden, .filtered'), layoutPadding);
-}
-
-function addCollab(){
-  cy.nodes('[type = "project"]').forEach(function(projectNode) {
-    projectNode.closedNeighborhood().nodes('[type = "person"]').forEach(function(person){
-      projectNode.closedNeighborhood().nodes('[type = "person"]').forEach(function(otherPerson){
-        if(person != otherPerson && cy.edges('[source ="' + otherPerson.id() + '"][target ="' + person.id()+ '"]').size() < 1 ){
-          cy.add({
-            group: "edges",
-            data: { id: person.id() + "to" + otherPerson.id(), source: person.id(), target: otherPerson.id(), type: "collab" }
-          });
-        }
-      })
+    var schoolLayout = cy.elements('[type = "school"]').layout({
+      name: 'grid',
+      columns: schoolColumns,
+      boundingBox: { x1: 0, y1: 0, w: schoolWidth , h: schoolHeight }
     })
+
+    schoolLayout.run();
+
+    spreadSchools();
+
+    addKey.arrange();
+    clear();
+    cy.$(':selected').forEach(highlight);
+    cy.$(':selected').forEach(spreadProjects);
+    cy.fit(cy.elements().not('.hidden, .filtered'), layoutPadding);
+  }
+
+
+  function drawCollab(){
+    clearStyles();
+    var elesHide = cy.elements('[type = "project"], [type = "school"]');
+    var elesFilter = cy.elements('[type = "project"]');
+
+    elesHide.addClass('hidden');
+    elesFilter.addClass('filtered');
+
+    var people = cy.nodes('[type = "person"]');
+
+    var layout = people.layout({
+      name: 'circle',
+      avoidOverlap : false,
+      padding: layoutPadding,
+      radius: paddedHeight / 2 ,
+      nodeDimensionsIncludeLabels: false,
+    });
+
+    layout.run();
+
+    cy.nodes().not(people).position({
+      x: cy.width()/2,
+      y: cy.height()/2,
+    });
+    addKey.arrange();
+    clear();
+    cy.$(':selected').forEach(highlight);
+    cy.fit(cy.elements().not('.hidden, .filtered'), layoutPadding);
+  }
+
+  function addCollab(){
+    cy.nodes('[type = "project"]').forEach(function(projectNode) {
+      projectNode.closedNeighborhood().nodes('[type = "person"]').forEach(function(person){
+        projectNode.closedNeighborhood().nodes('[type = "person"]').forEach(function(otherPerson){
+          if(person != otherPerson && cy.edges('[source ="' + otherPerson.id() + '"][target ="' + person.id()+ '"]').size() < 1 ){
+            cy.add({
+              group: "edges",
+              data: { id: person.id() + "to" + otherPerson.id(), source: person.id(), target: otherPerson.id(), type: "collab" }
+            });
+          }
+        })
+      })
+    });
+  }
+
+
+
+  function initCy( then ){
+
+    var loading = document.getElementById('loading');
+    var elements = then[0]
+    var styleJson = then[1];
+
+    let defaultZoom = 1
+
+    loading.classList.add('loaded');
+
+
+    var cy = window.cy = cytoscape({
+      container: document.getElementById('cy'),
+      style: styleJson,
+      elements: elements,
+      motionBlur: true,
+      selectionType: 'single',
+      boxSelectionEnabled: false,
+      wheelSensitivity: 0.5,
+    })
+
+    addCollab();
+    addKey();
+
+    cy.elements('[type = "school"]').addClass("school");
+    cy.elements('[type = "project"]').addClass("project");
+
+    cy.minZoom(0.2);
+    cy.maxZoom(maxZoom);
+
+    cy.on('select', 'node', function(e){
+
+      var node = this;
+
+      if ($('#showSchools').prop('checked') == true) {
+        spreadProjects( node );
+      }
+
+      highlight( node );
+
+    });
+
+    cy.on('unselect', 'node', function(e){
+
+      var node = this;
+
+      if ($('#showSchools').prop('checked') == true) {
+        unspreadProjects( node );
+      }
+
+      clear();
+      populateHtml.clearNav();
+
+    });
+
+    cy.on('zoom', function(event){
+      console.log(cy.nodes('[type = "project"]'));
+
+      cy.nodes('[type = "person"],[type = "project"]').style({
+        'label': function( ele ){ return ele.data('name')}
+      })
+
+     if(cy.zoom() < 1.2){
+      cy.nodes('[type = "person"]:unselected').style({
+        'label': function( ele ){ return getInitials( ele.data('name'), 2, 1)}
+      })
+
+       cy.nodes('[type = "project"]:unselected').style({
+        'label': function( ele ){ return getInitials( ele.data('name'), 2, 2)}
+      })
+
+    }else{
+      cy.nodes('[type = "person"]:unselected').style({
+        'label': function( ele ){ return getInitials(ele.data('name'), 1, 1) }
+      })
+
+      cy.nodes('[type = "project"]:unselected').style({
+        'label': function( ele ){ return ele.data('name')}
+      })
+
+    }
+
+    cy.nodes('.highlighted').style({
+        'label': function( ele ){ return ele.data('name')}
+      })
+
+
   });
-}
+
+    drawProjects();
+  }
+
+  $("#showProjects").on('change', function() {
+    if($('#showCollab').prop('checked') == true || $('#showSchools').prop('checked') == true){
+     drawProjects(); 
+   }
+   $('#showSchools').prop('checked', false);
+   $('#showProjects').prop('checked', true);
+   $('#showCollab').prop('checked', false);
+ })
 
 
 
-function initCy( then ){
 
-  var loading = document.getElementById('loading');
-  var elements = then[0]
-  var styleJson = then[1];
+  $("#showSchools").on('change', function() {
+    if($('#showProjects').prop('checked') == true || $('#showCollab').prop('checked') == true){
+     drawSchools();
+   }
+   $('#showSchools').prop('checked', true);
+   $('#showProjects').prop('checked', false);
+   $('#showCollab').prop('checked', false);
+ })
 
-  let defaultZoom = 1
+  $("#showCollab").on('change', function() {
 
-  loading.classList.add('loaded');
+    if($('#showProjects').prop('checked') == true || $('#showSchools').prop('checked') == true){
+     drawCollab();
+   }
 
+   $('#showSchools').prop('checked', false);
+   $('#showProjects').prop('checked', false);
+   $('#showCollab').prop('checked', true);
+ })
 
-  var cy = window.cy = cytoscape({
-    container: document.getElementById('cy'),
-    style: styleJson,
-    elements: elements,
-    motionBlur: true,
-    selectionType: 'single',
-    boxSelectionEnabled: false,
-    wheelSensitivity: 0.5,
+  $("#showInfo").on('change', function() {
+    $("#infoWrapper").toggleClass("expanded");
+    clear();
+    cy.$(':selected').forEach(highlight);
   })
 
-  addCollab();
-  addKey();
-
-  cy.elements('[type = "school"]').addClass("school");
-  cy.elements('[type = "project"]').addClass("project");
-
-  cy.minZoom(0.5);
-  cy.maxZoom(2);
-
-  cy.on('select', 'node', function(e){
-
-    var node = this;
-
-    if ($('#showSchools').prop('checked') == true) {
-      spreadProjects( node );
-    }
-
-    highlight( node );
-
-  });
-
-  cy.on('unselect', 'node', function(e){
-
-    var node = this;
-
-    if ($('#showSchools').prop('checked') == true) {
-      unspreadProjects( node );
-    }
-
-    clear();
-    populateHtml.clearNav();
-
-  });
-
-  drawProjects();
-}
-
-$("#showProjects").on('change', function() {
-  if($('#showCollab').prop('checked') == true || $('#showSchools').prop('checked') == true){
-   drawProjects();
- }
- $('#showSchools').prop('checked', false);
- $('#showProjects').prop('checked', true);
- $('#showCollab').prop('checked', false);
-})
-
-
-
-
-$("#showSchools").on('change', function() {
-  if($('#showProjects').prop('checked') == true || $('#showCollab').prop('checked') == true){
-   drawSchools();
- }
- $('#showSchools').prop('checked', true);
- $('#showProjects').prop('checked', false);
- $('#showCollab').prop('checked', false);
-})
-
-$("#showCollab").on('change', function() {
-
-  if($('#showProjects').prop('checked') == true || $('#showSchools').prop('checked') == true){
-   drawCollab();
- }
-
- $('#showSchools').prop('checked', false);
- $('#showProjects').prop('checked', false);
- $('#showCollab').prop('checked', true);
-})
-
-$("#showInfo").on('change', function() {
-  $("#infoWrapper").toggleClass("expanded")
-})
-
-$(window).on('resize', _.debounce(function () {
+  $(window).on('resize', _.debounce(function () {
     cy.fit(cy.elements().not('.hidden, .filtered'), layoutPadding);
-}, 250));
+  }, 250));
 
 });
+
+
+
+
+

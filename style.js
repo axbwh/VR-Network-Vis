@@ -9,7 +9,7 @@ function navPadding () {
 	var toggleWidth = $("#toggle").width() + parseInt($("#toggle").css("right"), 10);
 	var leftOffset =  (windowWidth-headerWidth)/2;
 
-	console.log("| ogNavHeight = " + ogNavHeight + "| headerHeight = " + headerHeight + "| windowWidth = " + windowWidth);
+	//console.log("| ogNavHeight = " + ogNavHeight + "| headerHeight = " + headerHeight + "| windowWidth = " + windowWidth);
 
 if(windowWidth < controlWidth + 560 + padding){
 		$("#header").addClass("stacked");

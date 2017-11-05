@@ -54,14 +54,14 @@ node {
 	height: 30;
 
 	font-family: roboto condensed, helvetica, sans serif;
-	font-size: 14;
+	font-size: 10;
 
 	text-margin-y : 1px;
 
 	font-weight: 300;
 	font-style: italic;
 
-	min-zoomed-font-size: 14;
+	min-zoomed-font-size: 10;
 	content: data(name);
 
 	text-valign: center;
