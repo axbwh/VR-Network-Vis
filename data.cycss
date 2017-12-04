@@ -1,5 +1,6 @@
 .filtered {
 	display: none;
+	events : no;
 }
 
 
@@ -9,7 +10,10 @@ core {
 }
 
 edge {
-	curve-style: haystack;
+	events : no;
+	curve-style: bezier;
+	target-endpoint : outside-to-line;
+	source-endpoint : outside-to-line;
 	/*line-style: dotted;*/
 	/*haystack-radius: 0;*/
 	opacity: 0.2;
@@ -17,6 +21,7 @@ edge {
 	width: 2;
 	z-index: 0;
 	overlay-opacity: 0;
+
 }
 
 edge.school {
@@ -43,6 +48,7 @@ edge.project{
 	control-point-weight:0.75;
 	edge-distances : node-position;
 	target-endpoint : outside-to-line;
+	source-endpoint : outside-to-line;
 	target-arrow-color : #287777;
 	/*target-arrow-shape: circle;
 	target-arrow-fill : filled;*/
@@ -98,21 +104,24 @@ background-color: #1B4966;
 }
 
 node.school {
-
+	shape : ellipse;
 	font-weight: 600;
 	font-style: normal;
 	text-transform: uppercase;
 	text-margin-y : 1.5px;
 
-	border-width: 5px;
+	border-width: 8px;
 	border-color: #B6AB72;
+	border-style: double;
 	background-color: #1A2A39;
 
-	width: mapData(count, 1, 20, 30, 120);
-	height: mapData(count, 1, 20, 30, 120);
+	width: 30;
+	height: 30;
 	font-size: 15;
 }
+
 node.project {
+	shape : ellipse;
 	text-margin-y : 1px;
 	font-weight: 300;
 	font-style: normal;
@@ -125,8 +134,8 @@ node.project {
 	border-width: 2px;
 	border-color: #287777;
 
-	width: mapData(count, 1, 20, 30, 120);
-	height: mapData(count, 1, 20, 30, 120);
+	width: 30;
+	height: 30;
 }
 
 
@@ -168,8 +177,26 @@ node:selected {
 	height: 30;
 	border-color: #fff;
 	border-opacity: 1;
-	border-width: 4;
+	border-width: 4px;
 	opacity : 1;
+}
+
+ node.hover {
+	border-color: #fff;
+	border-width: 4px;
+}
+
+ node[type = "school"].hover {
+	border-color: #fff;
+	border-width: 8px;
+}
+
+ node[type = "school"]:selected {
+	border-width: 8px;
+}
+
+node[type = "key"]{
+	events : no;
 }
 
 edge.hidden{
@@ -192,5 +219,7 @@ edge.highlighted {
 	border-width: 0px;
 	background-color: #1A2A39;
  }
+
+
 
 

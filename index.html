@@ -13,7 +13,7 @@
   <div id="loading">
     <span class="fa fa-refresh fa-spin"></span>
   </div>
- <div id="header"><a>VR RESEARCH AT VICTORIA</a><img src="img/vic-logo.svg"></div>
+ <div id="outer-header"><div id="header"><a>VR RESEARCH AT VICTORIA</a><img src="assets/vic-logo.svg"></div></div>
   <div id="navbar">
     <div id="controls">
       <h>VIEW</h>
@@ -40,20 +40,28 @@
       <h2>Collaborators</h2>
 
     </div>
+
     <div id="toggle">
-    <h2>Show Details</h2>
       <div class ="checkbox-round">
         <input id="showInfo" type="checkbox" checked/>
         <label for="showInfo"></label>
       </div>
+      <h2>Show Details</h2>
+      <h></h>
+    </div>
+  </div>
+
+  <div id="navbar-bottom">
+    <div id="mailto">
+      <a href="mailto:someone@yoursite.com?subject=VR%20Reasearch%20At%20Victoria%20Request%20Dataset%20Addition&body=%0D%0AName : %0D%0A%0D%0ARole : %0D%0A%0D%0AFaculty : %0D%0A%0D%0ASchool : %0D%0A%0D%0AName : %0D%0A%0D%0AProgramme : %0D%0A%0D%0AVictoria Staff Page : %0D%0A%0D%0APersonal Website : %0D%0A%0D%0A300 Character Biography : %0D%0A%0D%0APhotograph : %0D%0A"><h2>Request Addition<span class="icon-mailto"></span></h2></a>
     </div>
   </div>
 
   
 
-  <div id="infoWrapper">
+  <div id="infoWrapper" class="expanded">
     <div id="infoContainer" class="info">
-      <div class="container"></div>
+      <div class="container"><div class="info-row"><em> Select Any Node </em></div></div>
     </div>
 
   </div>
@@ -61,6 +69,7 @@
   <script src="http://cdnjs.cloudflare.com/ajax/libs/bluebird/1.2.2/bluebird.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.3/fastclick.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="waitforimages.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.js"></script>
   <script src="node_modules/cytoscape/dist/cytoscape.js"></script>

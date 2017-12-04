@@ -7,36 +7,131 @@ html, body {
   background: #1A2A39;
 }
 
+@font-face {
+  font-family: 'vrvis';
+  src:  url('assets/fonts/vrvis.eot?9vojiz');
+  src:  url('assets/fonts/vrvis.eot?9vojiz#iefix') format('embedded-opentype'),
+    url('assets/fonts/vrvis.ttf?9vojiz') format('truetype'),
+    url('assets/fonts/vrvis.woff?9vojiz') format('woff'),
+    url('assets/fonts/vrvis.svg?9vojiz#vrvis') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'vrvis' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-left: 10px;
+}
+
+.icon-mailto:before {
+  content: "\1f582";
+}
+
+/**
+ * CSS image crop. Forces image to specific aspect ratio cropping at the middle.
+ * http://dabblet.com/gist/4711695
+ */
+
+ .id-wrapper{
+  width : 150px;
+  padding-left: calc((100% - 150px)/2);
+  
+ }
+
+ .id-wrapper :hover{
+  border-color: #fff;
+ }
+
+.img-crop{
+  width: 100%;
+  /*padding-left: calc((100% - 200px)/2);*/
+  padding-left: 0px;
+  border-top-left-radius: 50% 50%;
+  border-top-right-radius: 50% 50%;
+  border-bottom-right-radius: 50% 50%;
+  border-bottom-left-radius: 50% 50%;
+  border: solid 5px #1A2A39;
+}
+
+.img-crop{
+ /* some background color for short images */
+  overflow: hidden;
+  
+  /* remove white-space for inline-block elements */
+  letter-spacing: -0.31em; /* webkit */
+  *letter-spacing: normal; /* reset IE < 8 */
+  word-spacing: -0.43em; /* IE < 8 && gecko */
+}
+.img-crop:before,
+.img-crop img{
+  /* vertically center the image */
+  display: inline-block;
+  vertical-align: middle;
+}
+.img-crop:before{
+  /* pseudo element to vertically align image to */
+  content: "";
+  
+  /* Magic Number */
+  /* Set this to your desired height(to width) ratio */
+  padding-top: 100%; /* % of original image width */ 
+}
+.img-crop img{
+  /* removes(sorta) image from the flow */
+  width: 100%;
+  padding-left: 100%;
+  margin: -999em -100%;
+}
+
 #header{
  position: absolute;
- width: 350px;
- left: 40%;
- top: 25px;
  z-index: 4;
+ float : left;
+  width: 230px;
+  height : 65px;
+ left: calc((100% - 230px)/2);
+ right: 20px;
+ top: auto;
+ bottom:0px;
 }
 
-#header.stacked{
- width: 125px;
- top: 93px;
- left: 50px;
+@media (max-width: 600px) {
+#header{
+ position: absolute;
+ z-index: 4;
+ float : left;
+  height : 65px;
+ left: 30px;
+}
 }
 
-#header.stacked > a{
-font-size: 18px;
-text-align: center;
+@media (max-width: 460px) {
+#header{
+ position: absolute;
+ z-index: 4;
+ float : left;
+  height : 65px;
+ left: calc((100% - 230px)/2);
+ bottom: 85px;
 }
-
-#header.stacked > img{
-font-size: 18px;
-width: 50%;
-  margin-left : 25%;
 }
 
 
 #header > a{
   display: inline-block;
   text-align: center;
-  font-size: 25px;
+  font-size: 18px;
   color : #fff;
   width: 100%;
   clear : right;
@@ -48,24 +143,35 @@ width: 50%;
   font-size: 25px;
   color : #fff;
   margin-top : 10px;
-  width: 20%;
-  margin-left : 40%;
+  height: 20px;
+  margin-left : calc((100% - ((76.5/35) * 20px))/2);
 }
 
 #navbar{
   border-bottom: solid 1px #3D4452;
   height : 75px;
+  width: 100%;
   background-color: #1A2A39;
   z-index: 2;
+}
+#navbar-bottom{
+  position: absolute;
+  border-top: solid 1px #3D4452;
+  height : 75px;
+  width: 100%;
+  background-color: #1A2A39;
+  z-index: 2;
+  top: calc(100% - 75px);
 }
 
 #controls {
   position: relative;
   display: inline-block;
-  left: 50px;
-  top: 18px;
   color : #fff;
   text-transform: uppercase;
+  width:calc(100% - 50px);
+  left: 50px;
+  top: 18px;
 }
 
 #toggle {
@@ -74,13 +180,35 @@ width: 50%;
   float: right;
   right: 20px;
   top: 18px;
-  max-width: calc(100% - 2em);
+  /*max-width: calc(100% - 2em);*/
   color : #fff;
   text-transform: uppercase;
+  width : 520px;
 }
 
-#toggle.stacked {
-   top: 93px;
+#mailto {
+  display: inline-block;
+  float: right;
+  padding-right: 20px;
+}
+
+#mailto a{
+  color : #fff;
+}
+
+#mailto a :hover{
+  color : #B6AB72;
+}
+
+#mailto a h2{
+  display: inline-block;
+  float: right;
+  font-size:15px;
+  margin-top: 40px;
+  font-style: italic;
+  text-decoration: none;
+  font-weight: 300;
+  color: inherit;
 }
 
 #toggle .checkbox-round{
@@ -88,19 +216,32 @@ width: 50%;
 
 }
 
-#controls > h, #toggle > h  {
+#toggle > h {
+    float: left;
+  font-size: 20px;
+  font-weight : 500;
+  padding-top: 8px;
+}
+#controls > h {
   float: left;
   font-size: 20px;
   font-weight : 500;
   padding-top: 8px;
 }
 
-#controls > h2, #toggle > h2 {
+#toggle > h2 {
+ float: right;
+  font-size: 15px;
+  font-weight : 300;
+}
+
+#controls > h2{ 
   float: left;
   font-size: 15px;
   font-weight : 300;
 
 }
+
 .checkbox-round{
   float: left;
   width: 26px;
@@ -112,6 +253,10 @@ width: 50%;
   position: relative;
   box-shadow: 0px 1px 3px rgba(0,0,0,0.5);
 }
+
+#toggle .checkbox-round{
+float: right;
+  }
 
 input[type=checkbox] {
   visibility: hidden;
@@ -141,11 +286,11 @@ input[type=checkbox] {
   margin-left: 20px;
 }
 #cy {
-  height: 88%;
+  height: calc(100% - 76px * 2);
   width: 100%;
   position: absolute;
   left: 0;
-  top: 12%;
+  top: 76px;
   background: #1A2A39;
 }
 
@@ -193,10 +338,6 @@ body.calc #loading {
   background-color: #1A2A39;
 }
 
-#infoWrapper .stacked{
- top: 150px; 
-}
-
 #infoWrapper .info .container {
   height: 100%;
   overflow-y: auto;
@@ -211,9 +352,23 @@ body.calc #loading {
   -webkit-margin-start: 0px;
   -webkit-margin-end: 0px;
 }
+
 #infoWrapper .info .container a:hover{
   text-decoration: none;
   color: #fff;
+}
+
+
+#infoWrapper .info .container em{
+  text-decoration: none;
+  color: #fff;
+  font-style: italic;
+  display: block;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    text-align: center;
 }
 
 #infoWrapper.expanded .info {
@@ -221,12 +376,21 @@ body.calc #loading {
   display: inherit;
 }
 
+
+
 .info-row{
   display: inline-block;
   padding: 0px 0px;
   width: 100%;
   color: #fff;
 }
+
+.info-row hr{
+  padding-left: 20px;
+  padding-right: 20px;
+  border-width: 0.5px;
+      border-bottom: solid 0.5px #3D4452;
+  }
 
 .info-left{
   padding-left: 20px;
@@ -238,4 +402,77 @@ body.calc #loading {
   padding-right: 20px;
   display: inline-block;
   float: right;
+}
+
+.info-brief{
+  padding-left: 20px;
+  padding-right: 20px;
+  display: block;
+  text-align: center;
+  padding-bottom: 8px;
+  padding-top: 8px;
+  /*float: left;*/
+}
+
+.media-wrapper{
+  width: 100%;
+}
+
+.img-fit{
+  width: 100%;
+  max-width: 560px;
+  background-color: #ededed;
+}
+
+
+
+@media (max-width: 1160px) and (min-width: 0px){
+
+  .info-left{
+  padding-left: 50px;
+}
+
+.info-right{
+  padding-right: 20px;
+  display: inline-block;
+  float: right;
+}
+
+.media-wrapper{
+  width: 560px;
+  padding-left: calc((100% - 560px)/2);
+}
+
+#cy {
+  height: calc(100% - 119px - 76px);
+  top: 119px;
+}
+
+#toggle {
+  position: relative;
+  display: inline-block;
+  float: right;
+  right: 20px;
+  top: 18px;
+  width: calc(100% - 20px - 50px);
+}
+
+#controls > h {
+  float: left;
+  font-size: 20px;
+  font-weight : 500;
+  left: 0;
+}
+
+#navbar{
+  border-bottom: solid 1px #3D4452;
+  height : 118px;
+}
+
+#infoWrapper .info{
+ top: 118px;
+ width: 100%;
+}
+
+
 }
