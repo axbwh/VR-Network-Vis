@@ -29,6 +29,7 @@
     Element.prototype.remove = function() {
       this.parentElement.removeChild(this);
     }
+    
     NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
       for(var i = this.length - 1; i >= 0; i--) {
         if(this[i] && this[i].parentElement) {
@@ -239,7 +240,9 @@ var getInitials = function (string, initNum, space) {
       console.log('else')
     }
 
-      infoContainer.append('<div class="id-wrapper"><a ' + idHref + '" target="_blank"><div class="img-crop"><img src="' + mediaLink +'"></div></a></div>');
+    infoContainer.append('<div class="id-wrapper"><a ' + idHref + '" target="_blank"><div style="background-image: url(' + mediaLink +');" class="img-crop"></div></a></div>');
+
+      // infoContainer.append('<div class="id-wrapper"><a ' + idHref + '" target="_blank"><div class="img-crop"><img src="' + mediaLink +'"></div></a></div>');
     
 
     infoContainer.append('<div class="info-row"><p class="info-left">Role |</p> <p class ="info-right">' +  node.data('role') + '</p></div>');
@@ -409,6 +412,10 @@ var getInitials = function (string, initNum, space) {
   function spreadProjects(node){
     nhoodProjects = node.closedNeighborhood().nodes('[type = "project"]');
 
+    nhoodProjects.style({
+        'label': function( ele ){ return ele.data('name')}
+      })
+
     var nodeNum = nhoodProjects.size();
 
     nhoodProjects.forEach(function(n){
@@ -474,11 +481,14 @@ var getInitials = function (string, initNum, space) {
 
     function drawProjects(){
       clearStyles();
+
+      cy.nodes().positions({ x : 0, y : 0});
       var elesHide = cy.elements('edge[type = "collab"], [type = "school"]');
       var elesFilter = cy.elements('edge[type = "collab"]');
 
-      var activePeople = cy.nodes('[type = "project"]').closedNeighborhood();
+      var activePeople = cy.nodes('[type = "project"]').closedNeighborhood().nodes('[type = "person"]');
       var nonActivePeople = cy.nodes('[type = "person"]').not( activePeople );
+
       elesFilter = elesFilter.add(nonActivePeople);
 
       elesHide.addClass('hidden');
@@ -491,35 +501,49 @@ var getInitials = function (string, initNum, space) {
       // cy.$(':selected').removeClass('filtered').addClass('hidden')
     }
 
-    var layout = cy.elements().layout({
-      name: 'concentric',
-      startAngle: 0,
-      sweep: Math.PI,
-      concentric: function(ele){
-        if(ele.data('type') == "project"){
-          return 1;
-        } else if(cy.nodes('[type = "project"]').closedNeighborhood().contains(ele) != true){
-         return 3;
-       }else{
-        return 2;
-      }
-    },
-    levelWidth: function(){ return 1 },
-    boundingBox : {
-      x1 : 0,
-      y1 : 0,
-      w : 300,
-      h: 300
-    },
-    avoidOverlap : false,
-    equidistant: false,
-     // spacingFActor : 0.5;
-     padding: layoutPadding,
-     minNodeSpacing: paddedHeight / 2 ,
-     nodeDimensionsIncludeLabels: false,
-   });
+        var personRadius = circleRadius(activePeople, 0) * 2;
+        var projectRadius = circleRadius(cy.nodes('[type = "project"]'), 0) * 2;
 
-    layout.run();
+        if(projectRadius < personRadius + 250){
+          projectRadius = personRadius + 250;
+        }
+
+        var personLayout = activePeople.layout({
+          name: 'circle',
+          avoidOverlap : false,
+          padding: layoutPadding,
+          startAngle: 0,
+          sweep: Math.PI,
+          boundingBox: {
+            x1: 0 - personRadius,
+            y1: 0 - personRadius,
+            w: personRadius*2,
+            h: personRadius*2,
+          },
+          radius: personRadius,
+          nodeDimensionsIncludeLabels: false
+        });
+
+        var projectLayout = cy.nodes('[type = "project"]').layout({
+          name: 'circle',
+          avoidOverlap : false,
+          padding: layoutPadding,
+          startAngle: 0,
+          sweep: Math.PI,
+          boundingBox: {
+            x1: 0 - projectRadius,
+            y1: 0 - projectRadius,
+            w: projectRadius*2,
+            h: projectRadius*2,
+          },
+          radius: projectRadius,
+          nodeDimensionsIncludeLabels: false
+        });
+
+        
+        personLayout.run();
+        projectLayout.run();
+
     addKey.arrange();
 
     clear();
@@ -533,14 +557,10 @@ var getInitials = function (string, initNum, space) {
     var elesFilter = cy.elements('[type = "null"]');
 
     var schoolNodes = cy.nodes('[type = "school"]');
+
     var emptySchoolNodes = schoolNodes.filter(function( ele ){
       return ele.closedNeighborhood().nodes('[type = "person"]').size() < 1;
-      console.log(ele.closedNeighborhood().nodes('[type = "person"]').size());
     });;
-    
-
-
-
 
 
     
@@ -575,7 +595,7 @@ var getInitials = function (string, initNum, space) {
 
       }
     }
-    var schoolRows = Math.floor(schoolNum/schoolColumns);
+    var schoolRows = Math.ceil(schoolNum/schoolColumns);
 
     var schoolBB = { w : 0, h : 0};
     var maxClusterSize = 0;
@@ -611,12 +631,14 @@ var getInitials = function (string, initNum, space) {
         });
         layout.run();
         console.log(node.data('name') + ".radius = " + radius*2);
-        var clusterSize = radius*2 + 30;
+        var clusterSize = radius*2;
         if(maxClusterSize < clusterSize){
           maxClusterSize = clusterSize;
         }
       });
     }
+
+
 
       //var maxRowSize = 0;
       //var maxColSize = 0;
@@ -657,11 +679,14 @@ var getInitials = function (string, initNum, space) {
 
     spreadSchools();
 
-    var schoolWidth = maxClusterSize*(schoolColumns) + 40 + (schoolColumns-1)*layoutPadding;
-    var schoolHeight = maxClusterSize*(schoolRows) + 40 + (schoolRows-1)*layoutPadding;
+    console.log("| maxClusterSize = " + maxClusterSize);
+
+    var schoolWidth = maxClusterSize*(schoolColumns) + (schoolColumns-1)*layoutPadding;
+    var schoolHeight = maxClusterSize*(schoolRows) + (schoolRows-1)*layoutPadding;
 
 
-    console.log(schoolHeight);
+    console.log("| schoolHeight = " + schoolHeight);
+    console.log("| schoolWidth = " + schoolWidth);
 
     var schoolLayout = cy.elements('[type = "school"]').layout({
       name: 'grid',

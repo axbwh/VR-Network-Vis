@@ -2,6 +2,18 @@ var padding = 18;
 const ogNavHeight = $("#header").height();
 const headerWidth = $("#header").width();
 
+function navbarCollapse() {
+    var x = document.getElementById("controls");
+    var y = document.getElementById("view");
+    if (x.className === "topnav") {
+        x.className += " responsive";
+        y.className = "active";
+    } else {
+        x.className = "topnav";
+        y.className = "";
+    }
+}
+
 function navPadding () {
 	var windowWidth = $( window ).width();	
 	var headerHeight = $("#header").height() + parseInt($("#header").css("top"), 10);

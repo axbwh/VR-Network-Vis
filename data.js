@@ -1,4 +1,20 @@
+
 function loadData() {
+  
+    if (!String.prototype.includes) {
+    String.prototype.includes = function(search, start) {
+      if (typeof start !== 'number') {
+        start = 0;
+      }
+
+      if (start + search.length > this.length) {
+        return false;
+      } else {
+        return this.indexOf(search, start) !== -1;
+      }
+    };
+  }
+
   const SCHOOL_MATCHERS = {
     "Design": ["design"],
     "Film": ["film"],
@@ -15,13 +31,12 @@ function loadData() {
   }
 
   const FAC_MATCHERS = {
-    "Design": ["design"],
-    "Engineering & Computer Science": ["engineering", "computer science", "ecs", "computer graphics"],
+    "Design": ["design", "media design"],
+    "Engineering & Computer Science": ["engineering", "computer science", "ecs", "computer graphics", "computer graphics"],
     "Architecture": ["architecture", "soad"],
-    "Central Service Unit": ["its" ,"marketing" , "careers"],
-    "Management": ["management"],
-    "Faculty of Humanities & Social Sciences" : ["te kawa a maui", "psychology" , "psych", "wai te ata press", "film"],
-    "VBS" : ["vbs"],
+    "Central Service Unit": ["its" ,"marketing" , "careers", "learning and research technology team", "directorate", "information technology services", "engagement and alumni", "image services", "research development office"],
+    "Humanities & Social Sciences" : ["te kawa a maui", "psychology" , "psych", "wai te ata press", "film", "te kawa a māui", "art", "wai-te-ata press"],
+    "Victoria Business School" : ["vbs", "victoria business school", "information management", "management", "managment"],
   }
 
   function detectSchool(entry = "", TEXT_MATCHERS) {
@@ -30,7 +45,7 @@ function loadData() {
     }
 
     const detectedSchool = _.findKey(TEXT_MATCHERS, matchesSchool)
-    return detectedSchool || "Unknown"
+    return detectedSchool || "Other"
   }
 
   function detectRecommended(entry = "", allNames) {
@@ -75,7 +90,7 @@ function loadData() {
         siteLink: row["siteLink"],
         staffSiteLink: row["staffSiteLink"],       
         brief: row["bio"],
-        school: detectSchool(row["programme"], SCHOOL_MATCHERS),
+        school: row["programme"],
         fac: detectSchool(row["programme"], FAC_MATCHERS),
         recommendations: detectRecommended(row["collaborators"], allNames),
         questionsHtml: formatQuestions(row, questionsRow)
@@ -108,7 +123,7 @@ function loadData() {
         pData.map(row =>({ data : row })),
         _.keys(FAC_MATCHERS).map(name => ({ data: { id: name, name: name, programme: "",  type: "school" } })),//school nodes
 
-      { data: { id: "Unknown", name: "Unknown", type: "school" }},//unknown school node
+      { data: { id: "Other", name: "Other", type: "school" }},//unknown school node
        // _.uniq(personData.map(row => row.role)).map(role => ({ data: { id: role, name: role, type: "role" }}))//person data
 
       ]),
@@ -116,9 +131,9 @@ function loadData() {
 
       edges: _.flattenDeep([
         personData.map(row => ({ data: { source: row.name, target: row.fac, type: "school" } })),//edges(conection lines) for school to person
-        personData.map(row => {
-          return row.recommendations.map(name => ({ data: { source: row.name, target: name, type: "collab"} }))//edges between collaborators
-        }),
+        // personData.map(row => {
+        //   return row.recommendations.map(name => ({ data: { source: row.name, target: name, type: "collab"} }))//edges between collaborators
+        // }),
 
         //personData.map(row => ({ data: { source: row.name, target: row.role, type: "role" } }))// edges between roles
        pData.map(row => {
@@ -144,12 +159,12 @@ function loadData() {
       // var surveyNames = surveyData.then(function(){ console.log("surveynames =" + surveyData.extractedNames)
   //   return surveyData.extractedNames})
 
-  var surveyData = $.ajax({ url: 'data-edit.csv', type: 'GET', dataType: 'text' })
+  var surveyData = $.ajax({ url: 'data.csv', type: 'GET', dataType: 'text' })
   .then(parseData)//parse csv using papaparse.js, convert to js object
   .then(extractRelevantData)//uses lodash.js to iterate over objects and extract relevant data
 
   var projectData = surveyData.then(function(data){
-    return $.ajax({ url: 'project_data_image_updates.csv', type: 'GET', dataType: 'text' })
+    return $.ajax({ url: 'project_data.csv', type: 'GET', dataType: 'text' })
     .then(parseData)
     .then(extractProjectData.bind(null, data.extractedNames))
   })

@@ -4,8 +4,11 @@
   <meta charset=utf-8 />
   <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
 
-  <title>VR Research at Victoria</title>
-  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" />
+  <title>Connected Worlds</title>
+  <link href="normalize.css" rel="stylesheet">
+  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type='text/css'>
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
   <link href="style.css" rel="stylesheet">
 </head>
 <body>
@@ -13,31 +16,44 @@
   <div id="loading">
     <span class="fa fa-refresh fa-spin"></span>
   </div>
- <div id="outer-header"><div id="header"><a>VR RESEARCH AT VICTORIA</a><img src="assets/vic-logo.svg"></div></div>
+  <div id="outer-header"><div id="header"><a>Connected Worlds</a><img src="assets/vic-logo.svg"></div></div>
+
   <div id="navbar">
-    <div id="controls">
+    <div id="controls" class="topnav">
+
+      <a href="javascript:void(0);"  onclick="navbarCollapse()">
+      <div id="view" class="">
       <h>VIEW</h>
+      <h3 class="icon">&#9776;</h3>
+      </div>
+      </a>
 
-      <div class ="checkbox-round">
-        <input id="showProjects" type="checkbox" checked/>
-        <label for="showProjects"></label>
+      <div class="control">
+        <div class ="checkbox-round">
+          <input id="showProjects" type="checkbox" checked/>
+          <label for="showProjects"></label>
+        </div>
+
+        <h2>Projects</h2>
       </div>
 
-      <h2>Projects</h2>
+      <div class="control">
+        <div class ="checkbox-round">
+          <input id="showSchools" type="checkbox" />
+          <label for="showSchools"></label>
+        </div>
 
-      <div class ="checkbox-round">
-      <input id="showSchools" type="checkbox" />
-      <label for="showSchools"></label>
+        <h2>Programme</h2>
       </div>
 
-      <h2>Programme</h2>
+      <div class="control">
+        <div class ="checkbox-round">
+          <input id="showCollab" type="checkbox" />
+          <label for="showCollab"></label>
+        </div>
 
-      <div class ="checkbox-round">
-      <input id="showCollab" type="checkbox" />
-      <label for="showCollab"></label>
+        <h2>Collaborators</h2>
       </div>
-
-      <h2>Collaborators</h2>
 
     </div>
 
@@ -52,9 +68,11 @@
   </div>
 
   <div id="navbar-bottom">
+    <a href="mailto:someone@yoursite.com?subject=VR%20Connected%20Worlds%20Request">
     <div id="mailto">
-      <a href="mailto:someone@yoursite.com?subject=VR%20Reasearch%20At%20Victoria%20Request%20Dataset%20Addition&body=%0D%0AName : %0D%0A%0D%0ARole : %0D%0A%0D%0AFaculty : %0D%0A%0D%0ASchool : %0D%0A%0D%0AName : %0D%0A%0D%0AProgramme : %0D%0A%0D%0AVictoria Staff Page : %0D%0A%0D%0APersonal Website : %0D%0A%0D%0A300 Character Biography : %0D%0A%0D%0APhotograph : %0D%0A"><h2>Request Addition<span class="icon-mailto"></span></h2></a>
+      <span class="icon-mailto"></span> <h2>Request Addition</h2> <!-- %0D%0A%0D%0A // linebreak htmlcode -->
     </div>
+    </a>
   </div>
 
   
