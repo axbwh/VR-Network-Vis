@@ -16,7 +16,7 @@
   <div id="loading">
     <span class="fa fa-refresh fa-spin"></span>
   </div>
-  <div id="outer-header"><div id="header"><a>Connected Worlds</a><img src="assets/vic-logo.svg"></div></div>
+  <div id="outer-header"><div id="header"><a>Connected Worlds</a> <span>: Research into VR, AR and MR at Victoria</span><img src="assets/vic-logo.svg"></div></div>
 
   <div id="navbar">
     <div id="controls" class="topnav">
@@ -67,6 +67,8 @@
     </div>
   </div>
 
+  <div><input id="autocomplete" type="text" placeholder="Search Nodes" spellcheck="false" onclick="this.select()"></div>
+
   <div id="navbar-bottom">
     <a href="mailto:someone@yoursite.com?subject=VR%20Connected%20Worlds%20Request">
     <div id="mailto">
@@ -87,6 +89,8 @@
   <script src="http://cdnjs.cloudflare.com/ajax/libs/bluebird/1.2.2/bluebird.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.3/fastclick.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="jquery-ui.js"></script>
+  <script src="detectie.js"></script>
   <script src="waitforimages.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.1.2/papaparse.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.2/lodash.js"></script>

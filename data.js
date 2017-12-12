@@ -1,7 +1,7 @@
 
 function loadData() {
-  
-    if (!String.prototype.includes) {
+
+  if (!String.prototype.includes) {
     String.prototype.includes = function(search, start) {
       if (typeof start !== 'number') {
         start = 0;
@@ -39,13 +39,32 @@ function loadData() {
     "Victoria Business School" : ["vbs", "victoria business school", "information management", "management", "managment"],
   }
 
-  function detectSchool(entry = "", TEXT_MATCHERS) {
-    function matchesSchool(matchers) {
-      return _.some(matchers, matcher => entry.toLowerCase().includes(matcher))
-    }
+  const ROLE_MATCHERS = {
+    "Project": ["project"],
 
-    const detectedSchool = _.findKey(TEXT_MATCHERS, matchesSchool)
-    return detectedSchool || "Other"
+    "School" : ["school"],
+
+    "Academic Staff" : ["academic staff"],
+
+    "Honours Student" : ["honours student"],
+
+    "PhD Student" : ["phd student"],
+
+    "Masters Student" : ["masters student"],
+
+    "Professional Staff" : ["professional staff"],
+
+  }
+
+  
+
+  function detect(entry = "", TEXT_MATCHERS) {
+    function matches(matchers) {
+    return _.some(matchers, matcher => entry.toLowerCase().includes(matcher))
+  }
+
+    const detected = _.findKey(TEXT_MATCHERS, matches)
+    return detected || "Other"
   }
 
   function detectRecommended(entry = "", allNames) {
@@ -59,14 +78,19 @@ function loadData() {
     const formattedQuestions = _.keys(row).map(questionKey => { // .keys creates array of object keys(csv column names) .map iterates over array/object and creates array by invoking function
       if (row[questionKey] && row[questionKey] !== "Unknown") { // if field exists and(&&) isn't(!==) "Unknown"
         return `
-          <h3>${questionsRow[questionKey]}</h3>
-          <p>${row[questionKey]}</p>
-        `
-      }
-    })
+      <h3>${questionsRow[questionKey]}</h3>
+      <p>${row[questionKey]}</p>
+      `
+    }
+  })
 
 
     return _.compact(formattedQuestions).join("")
+  }
+
+  function print(s){
+    console.log(s);
+    return s
   }
 
   function extractRelevantData(result) {
@@ -81,20 +105,20 @@ function loadData() {
 
     return {
       extractedData :
-        rowsWithNames.map(row => ({
+      rowsWithNames.map(row => ({
         id: row["name"],
         name: row["name"],
-        role: row["role"],
+        role: detect(row["role"], ROLE_MATCHERS),
         type: "person",
         mediaLink: row["mediaLink"],
         siteLink: row["siteLink"],
         staffSiteLink: row["staffSiteLink"],       
         brief: row["bio"],
         school: row["programme"],
-        fac: detectSchool(row["programme"], FAC_MATCHERS),
+        fac: detect(row["programme"], FAC_MATCHERS),
         recommendations: detectRecommended(row["collaborators"], allNames),
         questionsHtml: formatQuestions(row, questionsRow)
-        })),
+      })),
       extractedNames : allNames
     }
   }
@@ -108,15 +132,14 @@ function loadData() {
       mediaLink: row["mediaLink"],
       siteLink: row["siteLink"],
       brief: row["projectBrief"],
-      school: detectSchool(row["schools"], SCHOOL_MATCHERS),
-      fac: detectSchool(row["schools"], FAC_MATCHERS),
+      school: detect(row["schools"], SCHOOL_MATCHERS),
+      fac: detect(row["schools"], FAC_MATCHERS),
       recommendations: detectRecommended(row["collaborators"], Names)
     }))
   }
 
   function formatForCytoscape(sData, pData) {
     var personData = sData.extractedData
-    //console.log("schools = " + _.keys(SCHOOL_MATCHERS).map(name => ({ data: { id: name, name: name, type: "school" } })))
     return {
       nodes: _.flattenDeep([
         personData.map(row => ({ data: row })),//store extracted data
@@ -126,21 +149,23 @@ function loadData() {
       { data: { id: "Other", name: "Other", type: "school" }},//unknown school node
        // _.uniq(personData.map(row => row.role)).map(role => ({ data: { id: role, name: role, type: "role" }}))//person data
 
-      ]),
+       ]),
 
 
       edges: _.flattenDeep([
         personData.map(row => ({ data: { source: row.name, target: row.fac, type: "school" } })),//edges(conection lines) for school to person
         // personData.map(row => {
-        //   return row.recommendations.map(name => ({ data: { source: row.name, target: name, type: "collab"} }))//edges between collaborators
+        //   return row.recommendations.map(name => { 
+        //     _.pull(personData.data, {source : row.name, target : name, type: "collab"} , {source : name, target : row.name, type: "collab"} ) 
+        //     return ({ data: { source: row.name, target: name, type: "collab"} }) })//edges between collaborators
         // }),
 
         //personData.map(row => ({ data: { source: row.name, target: row.role, type: "role" } }))// edges between roles
-       pData.map(row => {
-          return row.recommendations.map(name => ({ data: { source: row.name, target: name, type: "project" } }))//edges between projects
+        pData.map(row => {
+          return row.recommendations.map(name => ({ data: { source: row.name, target: name, type: "project" } }))//edges between projects and people
         }),
 
-      ])
+        ])
     }
   }
 
@@ -150,14 +175,6 @@ function loadData() {
       header: true //first row interpreted as field name, following rows interpreted as objects with values keyed by field name
     })
   }
-
-  // return $.ajax({ url: 'project_data.csv', type: 'GET', dataType: 'text' })//jquery ajax request for csv file
-  //   .then(parseData)//parse csv using papaparse.js, convert to js object
-  //   .then(extractProjectData)
-  //   .then(formatForCytoscape)
-    //console.log("surveynames =" + d.extractedNames)
-      // var surveyNames = surveyData.then(function(){ console.log("surveynames =" + surveyData.extractedNames)
-  //   return surveyData.extractedNames})
 
   var surveyData = $.ajax({ url: 'data.csv', type: 'GET', dataType: 'text' })
   .then(parseData)//parse csv using papaparse.js, convert to js object

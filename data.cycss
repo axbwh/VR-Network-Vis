@@ -18,7 +18,7 @@ edge {
 	/*haystack-radius: 0;*/
 	opacity: 0.2;
 	line-color: #fff;
-	width: 2;
+	width: 1;
 	z-index: 0;
 	overlay-opacity: 0;
 
@@ -28,15 +28,20 @@ edge.school {
 	line-color: #B6AB72;
 	line-style: solid;
 	z-index: 2;
-	opacity: 1;
+	opacity: 0;
 }
+
+
 
 edge[type = "collab"] {
 	opacity: 0.2;
-	line-color: #fff;
+	line-color: #78909C;
 	line-style: solid;
 	z-index: 1;
 }
+
+
+
 
 edge.project{
 	line-color: #287777;
@@ -49,9 +54,6 @@ edge.project{
 	edge-distances : node-position;
 	target-endpoint : outside-to-line;
 	source-endpoint : outside-to-line;
-	target-arrow-color : #287777;
-	/*target-arrow-shape: circle;
-	target-arrow-fill : filled;*/
 
 }
 
@@ -83,28 +85,49 @@ node {
 }
 
 
-node[role = "Academic staff"] {
+node[role = "Academic Staff"] {
 background-color: #287777;
 }
 
-node[role = "Honours student"] {
+node[role = "Honours Student"] {
 background-color: #4A3247;
-}
-
-node[role = "PhD student"] {
-background-color: #B6AB72;
-}
-
-node[role = "Masters student"] {
 background-color: #4489A3;
 }
 
-node[role = "General staff"] {
+node[role = "PhD Student"] {
+background-color: #B6AB72;
+background-color: #4489A3;
+}
+
+node[role = "Masters Student"] {
+background-color: #4489A3;
+}
+
+node[role = "Professional Staff"] {
 background-color: #1B4966;
 }
 
+
 node.school {
+
 	shape : ellipse;
+	text-margin-y : 1px;
+	font-weight: 300;
+	font-style: normal;
+	text-transform: uppercase;
+	text-outline-width: 2;
+
+	text-valign: center;
+
+	background-color: #1A2A39;
+	background-opacity : 1;
+	border-width: 2px;
+	border-color: #B6AB72;
+
+	width: 30;
+	height: 30;
+
+/*	shape : ellipse;
 	font-weight: 600;
 	font-style: normal;
 	text-transform: uppercase;
@@ -118,6 +141,7 @@ node.school {
 	width: 30;
 	height: 30;
 	font-size: 15;
+	*/
 }
 
 node.project {
@@ -126,6 +150,7 @@ node.project {
 	font-weight: 300;
 	font-style: normal;
 	text-transform: uppercase;
+	text-outline-width: 2;
 
 	text-valign: center;
 
@@ -172,6 +197,11 @@ node.highlighted {
     	opacity : 1;
 }
 
+node.hover-hood {
+    	text-outline-opacity: 1;
+    	opacity : 1;
+}
+
 node:selected {
 	width: 30;
 	height: 30;
@@ -186,14 +216,14 @@ node:selected {
 	border-width: 4px;
 }
 
- node[type = "school"].hover {
+/* node[type = "school"].hover {
 	border-color: #fff;
 	border-width: 8px;
 }
 
  node[type = "school"]:selected {
 	border-width: 8px;
-}
+}*/
 
 node[type = "key"]{
 	events : no;
@@ -205,8 +235,27 @@ edge.hidden{
 
 edge.highlighted {
 	opacity: 1;
-	width: 4;
+	width: 1;
 	/*z-index: 9999;*/
+}
+
+edge.hover-hood {
+	opacity: 1;
+	width: 1;
+	/*z-index: 9999;*/
+}
+
+
+
+edge.hover-hood[type = "collab"] {
+	opacity: 1;
+	line-color: #78909C;
+	z-index: 5;
+}
+
+edge.highlighted[type = "collab"] {
+	opacity: 1;
+	line-color: #ECEFF1;
 }
 
 #titleKey {
