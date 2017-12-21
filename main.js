@@ -299,7 +299,7 @@ function populateHtml(node, callback){
   }
 
   if(datesActive){
-    infoContainer.append('<div class="info-row"><p class="info-left">Programme |</p> <p class ="info-right">' + datesActive + '</p></div>');
+    infoContainer.append('<div class="info-row"><p class="info-left">Dates Active |</p> <p class ="info-right">' + datesActive + '</p></div>');
   }
 
   if(brief){
