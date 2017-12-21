@@ -201,6 +201,26 @@ var getInitials = function (string, initNum, space) {
   return initials;
 };
 
+  function setInitials(ele, cutoff01, cutoff02, space){
+    if( ele.data('name').length > cutoff01){
+      var initNum = 1;
+      if(space != 1){
+        initNum = 2;
+      }
+    }else{
+      var initNum = 0;
+    }
+
+    var nameShort = getInitials(ele.data('name'), initNum, space);
+
+    if(nameShort.length > cutoff02){
+     nameShort = getInitials(ele.data('name'), 2, space);
+   }
+
+   return nameShort
+ }
+
+
 function checkImageExists(imageUrl, callBack) {
   var imageData = new Image();
   console.log(`imageUrl = ${imageUrl}`);
@@ -288,6 +308,33 @@ function populateHtml(node, callback){
 
   if(role){
     infoContainer.append('<div class="info-row"><p class="info-left">Role |</p> <p class ="info-right">' +  node.data('role') + '</p></div>');
+  }
+
+  if(nodeType == "project"){
+    var schoolHood = node.closedNeighborhood().closedNeighborhood().nodes('[type = "school"]');
+    if(schoolHood.size() > 0){
+      infoSchool = '';
+      schoolHood.forEach(function(ele, i){
+        infoSchool +=  ele.data('name'); 
+        if(schoolHood.size() > 1 && i < schoolHood.size() - 1){
+          infoSchool += " | " ;
+        }
+      });
+    }
+    
+    var cutoff = 12;
+
+    while(infoSchool.length > 60){
+      infoSchool = '';
+      schoolHood.forEach(function(ele, i){
+        infoSchool +=  setInitials(ele, cutoff, cutoff, 2);
+        if(schoolHood.size() > 1 && i < schoolHood.size() - 1){
+          infoSchool += " | ";
+        }
+      });
+      cutoff -=1;
+    }
+
   }
 
   if(infoSchool){
@@ -955,24 +1002,6 @@ function spreadProjects(node){
     });
   }
 
-  function setInitials(ele, cutoff01, cutoff02, space){
-    if( ele.data('name').length > cutoff01){
-      var initNum = 1;
-      if(space != 1){
-        initNum = 2;
-      }
-    }else{
-      var initNum = 0;
-    }
-
-    var nameShort = getInitials(ele.data('name'), initNum, space);
-
-    if(nameShort.length > cutoff02){
-     nameShort = getInitials(ele.data('name'), 2, space);
-   }
-
-   return nameShort
- }
 
  function setLabels(){
   cy.nodes('[type = "person"],[type = "project"],[type = "school"]').style({
