@@ -35,7 +35,7 @@ function loadData() {
     "Engineering & Computer Science": ["engineering", "computer science", "ecs", "computer graphics", "computer graphics"],
     "Architecture": ["architecture", "soad"],
     "Central Service Unit": ["its" ,"marketing" , "careers", "learning and research technology team", "directorate", "information technology services", "engagement and alumni", "image services", "research development office"],
-    "Humanities & Social Sciences" : ["te kawa a maui", "psychology" , "psych", "wai te ata press", "film", "te kawa a māui", "art", "wai-te-ata press"],
+    "Humanities & Social Sciences" : ["te kawa a maui", "wai te ata press", "film", "te kawa a māui", "art", "wai-te-ata press"],
     "Victoria Business School" : ["vbs", "victoria business school", "information management", "management", "managment"],
   }
 
@@ -111,6 +111,7 @@ function loadData() {
         role: detect(row["role"], ROLE_MATCHERS),
         type: "person",
         mediaLink: row["mediaLink"],
+        siteName: row["siteName"],
         siteLink: row["siteLink"],
         staffSiteLink: row["staffSiteLink"],       
         brief: row["bio"],
@@ -130,6 +131,8 @@ function loadData() {
       name: row["title"],
       type: "project",
       mediaLink: row["mediaLink"],
+      siteName: row["siteName"],
+      datesActive: row["datesActive"],
       siteLink: row["siteLink"],
       brief: row["projectBrief"],
       school: detect(row["schools"], SCHOOL_MATCHERS),

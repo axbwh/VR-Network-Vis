@@ -4,7 +4,10 @@
   <meta charset=utf-8 />
   <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
 
+
   <title>Connected Worlds</title>
+  <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
   <link href="normalize.css" rel="stylesheet">
   <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type='text/css'>
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
@@ -69,12 +72,14 @@
 
   <div><input id="autocomplete" type="text" placeholder="Search Nodes" spellcheck="false" onclick="this.select()"></div>
 
+      <!-- <a href="mailto:someone@yoursite.com?subject=VR%20Connected%20Worlds%20Request"><span class="icon-mailto"></span></a> -->
+    <select name="contact" id="contact">
+      <option selected="selected" data-class="cw-mailto" href="mailto:matt.plummer@vuw.ac.nz?subject=VR%20Connected%20Worlds%20Request">Request Addition</option><!-- %0D%0A%0D%0A // linebreak htmlcode -->
+      <option data-class="cw-github" href="https://github.com/axbwh/VR-Network-Vis">Submit Issue</option>
+    </select>
+ 
+
   <div id="navbar-bottom">
-    <a href="mailto:someone@yoursite.com?subject=VR%20Connected%20Worlds%20Request">
-    <div id="mailto">
-      <span class="icon-mailto"></span> <h2>Request Addition</h2> <!-- %0D%0A%0D%0A // linebreak htmlcode -->
-    </div>
-    </a>
   </div>
 
   
@@ -83,8 +88,18 @@
     <div id="infoContainer" class="info">
       <div class="container"><div class="info-row"><em> Select Any Node </em></div></div>
     </div>
+    </div>
 
-  </div>
+    <div id="viewAid-label" class="aid-label">Click to Change Graph Layouts</div>
+    <div id="searchAid-label" class="aid-label">Start Typing a Person/Project Name</div>
+    <div id="detailAid-label" class="aid-label">Project/Personal Details Will Display Here. Can Be Toggle On/Off for Better View</div>
+    <div id="contactAid-label" class="aid-label">Click Through to Request an Addition to the Dataset or Report an Issue Through GitHub</div>
+    <div id="viewAid" class="aid"></div>
+    <div id="searchAid" class="aid"></div>
+    <div id="detailAid" class="aid"></div>
+    <div id="contactAid" class="aid"></div>
+
+  
 
   <script src="http://cdnjs.cloudflare.com/ajax/libs/bluebird/1.2.2/bluebird.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.3/fastclick.min.js"></script>

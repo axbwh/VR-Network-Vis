@@ -6,7 +6,7 @@ var version = detectIE();
 console.log(version);
 
 if (version < 12 && version !== false) {
-  $("#loading").html('<p>Internet Explorer Detected. Please Upgrade to a Newer Web Browser</p>');
+  $("#loading").html('<p>This Application is Incompatible with Internet Explorer. Please try on Chrome, Edge, Firefox, Opera or Safari</p>');
 }
 
 function detectIE() {

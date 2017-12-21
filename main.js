@@ -55,9 +55,14 @@
 
     function addKey(){
 
+      var keyBorder = cy.add({
+        group: "nodes",
+        data: { id: "keyBorder", type : "border"}
+      })
+
       var titleKey = cy.add({
         group: "nodes",
-        data: { id: "titleKey", name: "KEY",  type: "key" }
+        data: { id: "titleKey", name: "NODE TYPE",  type: "key" }
       });
 
       var projectKey = cy.add({
@@ -69,7 +74,7 @@
 
       var schoolKey = cy.add({
         group: "nodes",
-        data: { id: "schoolKey", name: "Unit",  type: "key" }
+        data: { id: "schoolKey", name: "Programme",  type: "key" }
       });
 
       schoolKey.addClass("school")
@@ -77,7 +82,7 @@
       var roleKey = cy.add([
       {
         group: "nodes",
-        data: { id: "schoolKey", name: "Unit",  type: "key" }
+        data: { id: "schoolKey", name: "Programme",  type: "key" }
       },
       {
         group: "nodes",
@@ -109,18 +114,28 @@
       var keys = cy.elements('[type = "key"]');
       keys.unselectify().ungrabify();
 
+      keyBorder.unselectify().ungrabify();
+
       function arrange(){
+
         var maxLabelWidth = getMaxLabelWidth(keys);
         var nodeHeight = keys.height();
-        var bboxIgnore = cy.elements('.hidden, .filtered, [type = "key"]');
+        var bboxIgnore = cy.elements('.hidden, .filtered, [type = "key"], [type = "border"]');
         var bbox = cy.elements().not(bboxIgnore).boundingBox({ includeLabels : true});
         var keyNum = keys.size();
         var keysHeight = (nodeHeight*keyNum) + (keyYPadding*(keyNum-1));
+
         var layout = keys.layout({
           name: 'grid',
           columns: 1,
           boundingBox: { x1: bbox.x1 - (maxLabelWidth + keyXPadding), y1: bbox.y1 + ((bbox.h-keysHeight)/2), w: maxLabelWidth, h: keysHeight }
         });
+
+        keyBorder.position({ x: bbox.x1 - (maxLabelWidth + keyXPadding) + maxLabelWidth/2, y: bbox.y1 + ((bbox.h-keysHeight)/2) + keysHeight/2 });
+        keyBorder.style({
+          'width': (maxLabelWidth + keyXPadding/2),
+          'height': (keysHeight + keyXPadding/2),
+        })
 
         layout.run();
       }
@@ -186,6 +201,22 @@ var getInitials = function (string, initNum, space) {
   return initials;
 };
 
+function checkImageExists(imageUrl, callBack) {
+  var imageData = new Image();
+  console.log(`imageUrl = ${imageUrl}`);
+
+  imageData.onload = function() {
+    callBack(true);
+    console.log('sucess');
+  }
+
+  imageData.onerror = function() {
+    callBack(false);
+  };
+  imageData.src = imageUrl;
+}
+
+
     function convertMedia(html){//https://stackoverflow.com/a/22667308
       var pattern1 = /(?:http?s?:\/\/)?(?:www\.)?(?:vimeo\.com)\/?(.+)/g;
       var pattern2 = /(?:http?s?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)/g;
@@ -213,104 +244,173 @@ var getInitials = function (string, initNum, space) {
     
   }
 
-  function populateHtml(node){
-    var infoTitle = $("#toggle h");
-    var infoContainer = $("#infoWrapper .info .container");
+  function checkMediaIsVideo(html){
+    var pattern1 = /(?:http?s?:\/\/)?(?:www\.)?(?:vimeo\.com)\/?(.+)/g;
+    var pattern2 = /(?:http?s?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)/g;
+    var pattern3 = /([-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?(?:jpg|jpeg|gif|png))/gi;
 
-    infoContainer.html('');
-
-    var mediaLink = node.data('mediaLink');
-    var infoSchool = node.data('school');
-    var siteLink = node.data('siteLink');
-    var staffSiteLink = node.data('staffSiteLink');
-        // var siteName = node.data('siteName');
-        var siteName = node.data('name');
-        var brief = node.data('brief');
+    if(pattern1.test(html) || pattern2.test(html)){
+     return true;
+   }else{
+    return false;
+  }
+}
 
 
-        infoTitle.html(node.data('name'));
+function populateHtml(node, callback){
+  var infoTitle = $("#toggle h");
+  var infoContainer = $("#infoWrapper .info .container");
 
-        if(node.data('type') == "person"){
-          var mediaIsVideo = false;
-          if(mediaLink){            
-            var pattern = /([-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?(?:jpg|jpeg|gif|png))/gi;
-            if(pattern.test(mediaLink)){
-              mediaIsVideo = false;
-            }else{
-              mediaIsVideo = true;
-            }
-          }else{
-            mediaLink = 'assets/id-img.png';
-          }
+  infoContainer.html('');
 
-          if(staffSiteLink){
-            if(mediaIsVideo == true){
-              var videoHtml = convertMedia(mediaLink);
-              infoContainer.append('<div class="id-linked"><a ' + idHref + '" target="_blank">' + videoHtml + '</a></di>');
-              resizeIframe();
+  var brief = node.data('brief');
+  var infoSchool = node.data('school');
+  var mediaLink = node.data('mediaLink');
+  var siteLink = node.data('siteLink');
+  var staffSiteLink = node.data('staffSiteLink');
+  var siteName = node.data('siteName');
+  var nodeType = node.data('type');
+  var role = node.data('role');
+  var datesActive = node.data('datesActive')
 
-            }else{
-              var idHref = 'href="' + staffSiteLink + '"';
-              infoContainer.append('<div class="id-wrapper id-linked"><a ' + idHref + '" target="_blank"><div style="background-image: url(' + mediaLink +');" class="img-crop"></div></a></div>');
-            }
-          }else{
-            if(mediaIsVideo == true){
-              var videoHtml = convertMedia(mediaLink);
-              infoContainer.append('<div class="id-linked"><a target="_blank">' + videoHtml + '</a></di>');
-              resizeIframe();
-            }else{
-             infoContainer.append('<div class="id-wrapper"><a target="_blank"><div style="background-image: url(' + mediaLink +');" class="img-crop"></div></a></div>');
-           }
-         }
+  if(!mediaLink && nodeType == "person"){
+    mediaLink = 'assets/id-img.png';
+  }
+  console.log(`mediaLink = ${mediaLink}`)
 
+  
 
-
-      // infoContainer.append('<div class="id-wrapper"><a ' + idHref + '" target="_blank"><div class="img-crop"><img src="' + mediaLink +'"></div></a></div>');
-
-
-      infoContainer.append('<div class="info-row"><p class="info-left">Role |</p> <p class ="info-right">' +  node.data('role') + '</p></div>');
-
-    }else{
-      if(mediaLink){
-
-        var videoHtml = convertMedia(mediaLink);
-        infoContainer.append(videoHtml);
-
-        resizeIframe();
-      }
-    }
-    if(infoSchool){
-      infoContainer.append('<div class="info-row"><p class="info-left">Programme |</p> <p class ="info-right">' + infoSchool + '</p></div>');
-    }
-
-    if(siteLink){
-      infoContainer.append('<div class="info-row"><p class="info-left">Website |</p> <a  target="_blank" class ="info-right" href="' + siteLink + '">' + siteName + '</a></div>');
-    }
-
-    if(brief){
-      infoContainer.append('<div class="info-row"><hr><p class="info-brief">' + brief + '</p></div>');
-    }
-
-    
-
-    // populateHtml.clearNav = clearNav;
+  if(!siteName){
+    siteName = node.data('name');
   }
 
-  function clearNav(){
-    var infoContainer = $("#infoWrapper .info .container");
-      $("#toggle h").html('');
-      infoContainer.html(infoString);
+  infoTitle.html(node.data('name'));
+
+  if(role){
+    infoContainer.append('<div class="info-row"><p class="info-left">Role |</p> <p class ="info-right">' +  node.data('role') + '</p></div>');
+  }
+
+  if(infoSchool){
+    infoContainer.append('<div class="info-row"><p class="info-left">Programme |</p> <p class ="info-right">' + infoSchool + '</p></div>');
+  }
+
+  if(siteLink){
+    infoContainer.append('<div class="info-row"><p class="info-left">Website |</p> <a  target="_blank" class ="info-right" href="' + siteLink + '">' + siteName + '</a></div>');
+  }
+
+  if(datesActive){
+    infoContainer.append('<div class="info-row"><p class="info-left">Programme |</p> <p class ="info-right">' + datesActive + '</p></div>');
+  }
+
+  if(brief){
+    infoContainer.append('<div class="info-row"><hr><p class="info-brief">' + brief + '</p></div>');
+  }
+
+  var mediaIsVideo = checkMediaIsVideo(mediaLink);
+  var idHref = 'href="' + staffSiteLink + '"';
+
+  function embedImg(){
+    if( nodeType == "person"){
+      if(staffSiteLink){
+
+        infoContainer.prepend('<div class="id-wrapper id-linked"><a ' + idHref + '" target="_blank"><div style="background-image: url(' + mediaLink +');" class="img-crop"></div></a></div>');
+
+      }else{
+
+        infoContainer.prepend('<div class="id-wrapper"><a target="_blank"><div style="background-image: url(' + mediaLink + ');" class="img-crop"></div></a></div>');
+      }
+    }else{
+      var imgHtml = convertMedia(mediaLink);
+
+      infoContainer.prepend(imgHtml);
     }
+
+    callback();
+  }
+
+  function embedVideo(){
+
+    var videoHtml = convertMedia(mediaLink);
+
+    if( nodeType == "person"){
+
+      if(staffSiteLink){
+
+        infoContainer.prepend('<div class="id-linked"><a ' + idHref + '" target="_blank">' + videoHtml + '</a></div>');
+
+      }else{
+
+       infoContainer.prepend('<div class="id-linked"><a target="_blank">' + videoHtml + '</a></di>'); 
+     }
+
+   }else{
+
+    var videoHtml = convertMedia(mediaLink);
+
+    infoContainer.prepend(videoHtml);
+
+  }
+  resizeIframe();
+  callback();
+}
+
+if(mediaIsVideo == false){
+
+  checkImageExists(mediaLink, function(imageReady) {
+
+    if(imageReady == true) {
+
+      embedImg();
+
+    } else{
+      console.log(`media = ${mediaLink} `);
+
+      mediaLink = 'assets/id-img.png';
+      embedImg();
+
+    }
+  });
+
+}else if(mediaIsVideo == true){
+  embedVideo();
+}else{
+
+  callback();
+
+}
+}
+
+
+
+function clearNav(){
+  var infoContainer = $("#infoWrapper .info .container");
+  $("#toggle h").html('');
+  infoContainer.html(infoString);
+}
 
    // rearranges node in concentric layout around highlighted node
    function highlight( node ){
+    $("#detailAid").hide();
+    $("#detailAid-label").hide();
 
       var nhood = node.closedNeighborhood(); //closedNeighborhood returns connected eles
-      populateHtml(node);
+
+      if(node.data('type') == 'project'){
+        console.log('project')
+        var indhood = nhood.closedNeighborhood('[type = "school"]');
+        nhood = nhood.add(indhood);
+      }
+
+      if(node.data('type') == 'school'){
+        console.log('school')
+        var indhood = nhood.closedNeighborhood('[type = "project"]');
+        nhood = nhood.add(indhood);
+      }
+
+      populateHtml(node, reframe);
 
 
-
-      $('#infoContainer').waitForImages(function() {
+      function reframe() {
         // console.log("highlight");
 
       cy.batch(function(){ //batch processess multiple eles at once
@@ -322,7 +422,7 @@ var getInitials = function (string, initNum, space) {
         var h = cy.height();
 
         if($('#showInfo').prop('checked') == true){
-          console.log("| nhood.nodes().size() = " + nhood.nodes().size())
+          // console.log("| nhood.nodes().size() = " + nhood.nodes().size())
           if(nhood.nodes().size() < 3){
             nhood = cy.nodes();
           }
@@ -414,11 +514,15 @@ var getInitials = function (string, initNum, space) {
 
 
      });
-    });
     }
+  }
 
     function clear(){//reset layout
      cy.elements().removeClass('highlighted').removeClass('faded');
+   }
+
+   function fitAll(){
+    if(cy.$(':selected').size() < 1){
 
      cy.animate({
       fit: {
@@ -429,32 +533,31 @@ var getInitials = function (string, initNum, space) {
       duration: layoutDuration
     });
    }
+ }
 
-   function clearStyles(){
-    cy.elements().removeClass('filtered');
-    cy.elements().removeClass('hidden');
-    cy.elements().removeClass('highlighted');
-    cy.edges().unselect();
-  }
+ function clearStyles(){
+  cy.elements().removeClass('filtered');
+  cy.elements().removeClass('hidden');
+  cy.elements().removeClass('highlighted');
+  cy.edges().unselect();
+}
 
-  function spreadProjects(node){
-    nhoodProjects = node.closedNeighborhood().nodes('[type = "project"]');
+function spreadProjects(node){
+  nhoodProjects = node.closedNeighborhood().nodes('[type = "project"]');
 
-    nhoodProjects.style({
-      'label': function( ele ){ return ele.data('name')}
-    })
+  nhoodProjects.style({
+    'label': function( ele ){ return ele.data('name')}
+  })
 
-    var nodeNum = nhoodProjects.size();
+  var nodeNum = nhoodProjects.size();
 
-    nhoodProjects.forEach(function(n){
-      var p = n.position();
-      n.data('originPos', {
-        x: p.x,
-        y: p.y
-      });
+  nhoodProjects.forEach(function(n){
+    var p = n.position();
+    n.data('originPos', {
+      x: p.x,
+      y: p.y
     });
-
-
+  });
 
 
       // var nodeCenter =  nhoodProjects.position();position()
@@ -515,8 +618,12 @@ var getInitials = function (string, initNum, space) {
       var activePeople = cy.nodes('[type = "project"]').closedNeighborhood().nodes('[type = "person"]');
       var nonActivePeople = cy.nodes('[type = "person"]').not( activePeople );
 
-      elesFilter = elesFilter.add(nonActivePeople);
+      var emptySchoolNodes =  cy.elements('[type = "school"]').filter(function( ele ){
+        return ele.closedNeighborhood().nodes('[type = "person"]').size() < 1;
+      });
 
+      elesFilter = elesFilter.add(nonActivePeople);
+      elesFilter = elesFilter.add(emptySchoolNodes);
       elesHide.addClass('hidden');
       elesFilter.addClass('filtered');
 
@@ -594,13 +701,14 @@ var getInitials = function (string, initNum, space) {
 
     addKey.arrange();
 
-    clear();
+    //clear();
     cy.$(':selected').forEach(highlight);
-    cy.fit(cy.elements().not('.hidden, .filtered'), layoutPadding);
+    //cy.fit(cy.elements().not('.hidden, .filtered'), layoutPadding);
   }
 
   function drawSchools(){
     clearStyles();
+
     var elesHide = cy.elements('edge[type = "collab"]');
     var elesFilter = cy.elements('[type = "null"]');
 
@@ -608,11 +716,7 @@ var getInitials = function (string, initNum, space) {
 
     var emptySchoolNodes = schoolNodes.filter(function( ele ){
       return ele.closedNeighborhood().nodes('[type = "person"]').size() < 1;
-    });;
-
-
-    
-
+    });
 
     schoolNodes = cy.nodes('[type = "school"]').not(emptySchoolNodes);
 
@@ -628,23 +732,6 @@ var getInitials = function (string, initNum, space) {
       x: cy.width()/2,
       y: -50,
     });
-
-    
-
-    // var schoolColumns = Math.ceil(schoolNum/3);
-
-    // for(i = 2; i < 6; i ++){
-    //   if(schoolNum % i < schoolNum % schoolColumns){
-    //     schoolColumns = i;
-    //   }else if(schoolNum % i == schoolNum % schoolColumns){
-    //     if (i > schoolColumns) {
-    //       schoolColumns = i;
-    //     }
-
-    //   }
-    // }
-
-    // var schoolRows = Math.ceil(schoolNum/schoolColumns);
 
     var schoolBB = { w : 0, h : 0};
     var maxClusterSize = 0;
@@ -716,7 +803,6 @@ var getInitials = function (string, initNum, space) {
 
     var projectRadius = circleRadius(cy.nodes('[type = "project"]'));
 
-    // var projectRadius = schoolRadius + maxClusterSize/2 + 200;
 
     var projectLayout = cy.nodes('[type = "project"]').layout({
       name: 'circle',
@@ -850,9 +936,8 @@ var getInitials = function (string, initNum, space) {
     });
 
     addKey.arrange();
-    clear();
+    //clear();
     cy.$(':selected').forEach(highlight);
-    cy.fit(cy.elements().not('.hidden, .filtered'), layoutPadding);
   }
 
   function addCollab(){
@@ -915,7 +1000,13 @@ var getInitials = function (string, initNum, space) {
   }
 
   cy.nodes('.highlighted').style({
-    'label': function( ele ){ return ele.data('name')}
+    'label': function( ele ){ 
+      if(cy.nodes('.highlighted[type = "project"]').size() > 5 && ele.data('type') == 'project'){
+        return setInitials(ele, 6, 6, 1)
+      }else{
+        return ele.data('name')
+      }
+    }
   })
 }
 
@@ -934,13 +1025,16 @@ function hoverNight(node){
 }
 
 function setAuto(){
-  var viewNames = cy.nodes().not('.hidden, .filtered, [type = "key"]').map(function( ele ){
+  var viewNames = cy.nodes().not('.hidden, .filtered, [type = "key"], [type = "border"]').map(function( ele ){
     return ele.data('name');
   });
-  console.log(viewNames);
-  
   $( "#autocomplete" ).autocomplete( "option", "source", viewNames);
+}
+
+function initAuto(){
   $( "#autocomplete" ).on( "autocompletefocus", function( event, ui ) {
+    $("#searchAid").hide();
+    $("#searchAid-label").hide();
     var autoName = ui.item.value;
     var node = cy.nodes('[name = "' + ui.item.value + '"]');
     var hovered = cy.nodes('.hover-hood, .hover');
@@ -951,13 +1045,13 @@ function setAuto(){
     
     setLabels();
     hoverLight(node);
-  } );
+  });
 
   $( "#autocomplete" ).on( "autocompleteselect", function( event, ui ) {
-    $( "#autocomplete" ).blur();
+    //$( "#autocomplete" ).blur();
     var autoName = ui.item.value;
-    var node = cy.nodes('[name = "' + ui.item.value + '"]');
-    clearNav();
+    var node = cy.nodes('[name = "' + autoName + '"]');
+
     cy.$(':selected').unselect()
 
     node.select();  
@@ -966,7 +1060,6 @@ function setAuto(){
   });
 
   $( "#autocomplete" ).on( "autocompleteclose", function( event, ui ) {
-    // $( "#autocomplete" ).blur();
     cy.elements().removeClass('hover-hood').removeClass('hover')
   });
 
@@ -1003,10 +1096,6 @@ function initCy( then ){
   cy.maxZoom(maxZoom);
 
 
-
-
-
-
   cy.on('select', 'node', function(e){
     var node = this;
     highlight( node );
@@ -1030,15 +1119,11 @@ function initCy( then ){
   cy.on('unselect', 'node', function(e){
 
     var node = this;
-
-    // if ($('#showSchools').prop('checked') == true) {
-    //   unspreadProjects( node );
-    // }
+    $( "#autocomplete" ).val('');
 
     clear();
     clearNav();
-
-
+    fitAll();
   });
 
 
@@ -1047,15 +1132,20 @@ function initCy( then ){
   });
 
   drawProjects();
+  initAuto();
   setAuto();
+  fitAll();
 }
 
 
 
 $("#showProjects").on('change', function() {
+  $("#viewAid").hide();
+  $("#viewAid-label").hide();
   if($('#showCollab').prop('checked') == true || $('#showSchools').prop('checked') == true){
    drawProjects();
    setAuto();
+   fitAll();
  }
  $('#showSchools').prop('checked', false);
  $('#showProjects').prop('checked', true);
@@ -1064,10 +1154,12 @@ $("#showProjects").on('change', function() {
 
 
 $("#showSchools").on('change', function() {
+  $("#viewAid").hide();
+  $("#viewAid-label").hide();
   if($('#showProjects').prop('checked') == true || $('#showCollab').prop('checked') == true){
    drawSchools();
    setAuto();
-   
+   fitAll();   
  }
  $('#showSchools').prop('checked', true);
  $('#showProjects').prop('checked', false);
@@ -1075,25 +1167,33 @@ $("#showSchools").on('change', function() {
 })
 
 $("#showCollab").on('change', function() {
-
+  $("#viewAid").hide();
+  $("#viewAid-label").hide();
   if($('#showProjects').prop('checked') == true || $('#showSchools').prop('checked') == true){
    drawCollab();
    setAuto();
+   fitAll();
  }
-
  $('#showSchools').prop('checked', false);
  $('#showProjects').prop('checked', false);
  $('#showCollab').prop('checked', true);
 })
 
 $("#showInfo").on('change', function() {
+  $("#detailAid").hide();
+  $("#detailAid-label").hide();
   $("#infoWrapper").toggleClass("expanded");
   clear();
   cy.$(':selected').forEach(highlight);
 })
 
-$(window).on('resize', _.debounce(function () {
-  cy.fit(cy.elements().not('.hidden, .filtered'), layoutPadding);
+$(window).on('resize', function(){
+ $("#contact").iconselectmenu("close");
+ $("#autocomplete").autocomplete("close");
+});
+
+$(window).on('resize', _.debounce(function () {  
+  fitAll();
   clear();
   cy.$(':selected').forEach(highlight);
 }, 250));
@@ -1103,11 +1203,61 @@ $( "#autocomplete" ).autocomplete({
   // minLength: 2,
   classes: {
     "ui-autocomplete": "suggestion-menu",
-    "ui-menu-item": "suggestion",
+    "ui-menu-item": "suggestion-item",
   },
   position: { my: "left bottom", at: "left top", collision: "flip" },
   source: [''],
 });
+
+$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
+  _renderItem: function( ul, item ) {
+    var li = $( "<li>" ),
+    wrapper = $( "<div>", { text: item.label } );
+
+    $( "<span>", {
+      style: item.element.attr( "data-style" ),
+      "class": item.element.attr( "data-class" )
+    })
+    .appendTo( wrapper );
+
+    return li.append( wrapper ).appendTo( ul );
+  },
+
+  _renderButtonItem: function( item ) {
+    var div =  $( "<div>", { text: item.label } );
+    var buttonItem = $( "<span>", {
+      style: item.element.attr( "data-style" ),
+      "class": item.element.attr( "data-class" )
+    }).appendTo(div);
+
+  // this._setText( buttonItem, item.label );
+
+  return div;
+}
+});
+
+
+$("#contact").iconselectmenu({
+  open: function( event, ui ) {
+    $( "#autocomplete" ).autocomplete( "close" );
+    $("#contactAid").hide();
+    $("#contactAid-label").hide();
+
+  },
+  select: function( event, ui ) {
+    var outlink = ui.item.element.attr("href");
+    console.log
+    window.open(outlink);
+  },
+  classes: {
+    "ui-selectmenu-menu": "contact-menu",
+    "ui-selectmenu-open": "contact-menu-open",
+    "ui-menu-item": "contact-item"
+  },
+  position: { my: "left bottom", at: "left top", collision: "flip" }
+})
+.iconselectmenu( "menuWidget" )
+.addClass( "ui-menu-icons" );
 
 });
 

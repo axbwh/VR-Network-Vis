@@ -10,6 +10,7 @@ core {
 }
 
 edge {
+
 	events : no;
 	curve-style: bezier;
 	target-endpoint : outside-to-line;
@@ -58,6 +59,7 @@ edge.project{
 }
 
 node {
+	text-transform: uppercase;
 	width: 30;
 	height: 30;
 
@@ -67,9 +69,6 @@ node {
 	text-margin-y : 1px;
 
 	font-weight: 300;
-	font-style: italic;
-
-	min-zoomed-font-size: 10;
 	content: data(name);
 
 	text-valign: center;
@@ -82,6 +81,7 @@ node {
 	text-outline-color: #1A2A39;
 	text-outline-opacity: 1;
 	overlay-color: #fff;
+	border-opacity : 1;
 }
 
 
@@ -114,7 +114,6 @@ node.school {
 	text-margin-y : 1px;
 	font-weight: 300;
 	font-style: normal;
-	text-transform: uppercase;
 	text-outline-width: 2;
 
 	text-valign: center;
@@ -126,36 +125,20 @@ node.school {
 
 	width: 30;
 	height: 30;
-
-/*	shape : ellipse;
-	font-weight: 600;
-	font-style: normal;
-	text-transform: uppercase;
-	text-margin-y : 1.5px;
-
-	border-width: 8px;
-	border-color: #B6AB72;
-	border-style: double;
-	background-color: #1A2A39;
-
-	width: 30;
-	height: 30;
-	font-size: 15;
-	*/
 }
+
 
 node.project {
 	shape : ellipse;
 	text-margin-y : 1px;
 	font-weight: 300;
 	font-style: normal;
-	text-transform: uppercase;
 	text-outline-width: 2;
 
 	text-valign: center;
 
-	background-color: #287777;
-	background-opacity : 0;
+	background-color: #1A2A39;
+	background-opacity : 1;
 	border-width: 2px;
 	border-color: #287777;
 
@@ -179,6 +162,20 @@ node.faded {
 	text-opacity: 0;
 }
 
+node.school.faded {
+opacity : 1;
+background-opacity : 1;
+border-opacity : 0.5;
+}
+
+node.project.faded {
+opacity : 1;
+background-opacity : 1;
+border-opacity : 0.5;
+
+}
+
+
 node[type = "center"].faded {
 opacity :0;
 }
@@ -188,18 +185,19 @@ node.hidden{
 }
 
 node.highlighted {
-	min-zoomed-font-size: 0;
-    	font-size: 10;
     	text-outline-width: 2;
     	text-outline-opacity: 1;
-    	z-index: 9999;
+    	z-index: 6;
     	line-color: #fff;
     	opacity : 1;
+    	border-opacity : 1;
 }
 
 node.hover-hood {
     	text-outline-opacity: 1;
     	opacity : 1;
+    	border-opacity : 1;
+
 }
 
 node:selected {
@@ -207,13 +205,20 @@ node:selected {
 	height: 30;
 	border-color: #fff;
 	border-opacity: 1;
-	border-width: 4px;
+	border-width: 2px;
 	opacity : 1;
+	z-index: 7;
+	border-opacity : 1;
 }
 
  node.hover {
+ text-opacity: 1;
 	border-color: #fff;
-	border-width: 4px;
+	border-width: 2px;
+	text-outline-width: 2;
+	font-size: 16;
+	z-index : 8;
+
 }
 
 /* node[type = "school"].hover {
@@ -224,6 +229,10 @@ node:selected {
  node[type = "school"]:selected {
 	border-width: 8px;
 }*/
+
+edge[type = "school"].faded{
+	opacity : 0;
+}
 
 node[type = "key"]{
 	events : no;
@@ -236,13 +245,11 @@ edge.hidden{
 edge.highlighted {
 	opacity: 1;
 	width: 1;
-	/*z-index: 9999;*/
 }
 
 edge.hover-hood {
 	opacity: 1;
 	width: 1;
-	/*z-index: 9999;*/
 }
 
 
@@ -250,7 +257,7 @@ edge.hover-hood {
 edge.hover-hood[type = "collab"] {
 	opacity: 1;
 	line-color: #78909C;
-	z-index: 5;
+	z-index: 4;
 }
 
 edge.highlighted[type = "collab"] {
@@ -259,14 +266,26 @@ edge.highlighted[type = "collab"] {
 }
 
 #titleKey {
-	font-weight: 400;
+	font-weight: 300;
 	font-style: normal;
-	font-size: 25px;
-	text-transform: uppercase;
-	text-margin-y : 1.5px;
+	font-size: 20;
+	text-margin-y : 15px;
 
 	border-width: 0px;
 	background-color: #1A2A39;
+	text-valign: top;
+ }
+
+ #keyBorder {
+ events : no;
+ 	shape: rectangle;
+ 	border-width : 0.5px;
+ 	border-color : #ddd;
+ 	background-opacity : 0;
+ 	text-opacity : 0;
+
+
+
  }
 
 
