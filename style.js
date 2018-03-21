@@ -19,7 +19,11 @@ function navPadding () {
 	var headerHeight = $("#header").height() + parseInt($("#header").css("top"), 10);
 	var controlWidth = $("#controls").width() + parseInt($("#controls").css("left"), 10);
 	var toggleWidth = $("#toggle").width() + parseInt($("#toggle").css("right"), 10);
-	var leftOffset =  (windowWidth-headerWidth)/2;
+    var leftOffset =  (windowWidth-headerWidth)/2;
+    
+    if(windowWidth < 425){
+
+    }
 
 	//console.log("| ogNavHeight = " + ogNavHeight + "| headerHeight = " + headerHeight + "| windowWidth = " + windowWidth);
 

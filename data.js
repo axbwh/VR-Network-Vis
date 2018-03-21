@@ -60,7 +60,7 @@ function loadData() {
 
   function detect(entry = "", TEXT_MATCHERS) {
     function matches(matchers) {
-    return _.some(matchers, matcher => entry.toLowerCase().includes(matcher))
+    return _.some(matchers, matcher => entry.toLowerCase().replace(/\s+/g, '').includes(matcher.replace(/\s+/g, '')))
   }
 
     const detected = _.findKey(TEXT_MATCHERS, matches)
@@ -69,7 +69,7 @@ function loadData() {
 
   function detectRecommended(entry = "", allNames) {
     return allNames.filter(name => {
-      return entry.toLowerCase().includes(name.toLowerCase())
+      return entry.toLowerCase().replace(/\s+/g, '').includes(name.toLowerCase().replace(/\s+/g, ''))
     })
   }
 
