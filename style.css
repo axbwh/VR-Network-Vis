@@ -59,6 +59,10 @@ p {
   content: "\e904";
 }
 
+.cw-close:before {
+  content: "\e905";
+}
+
 /**
  * CSS image crop. Forces image to specific aspect ratio cropping at the middle.
  * http://dabblet.com/gist/4711695
@@ -123,7 +127,7 @@ p {
   text-align: center;
 }
 
-#header > a {
+#header>a {
   display: inline-block;
   text-align: center;
   font-size: 18px;
@@ -150,7 +154,6 @@ p {
 
 #toggle {
   position: fixed;
-  
   float: right;
   right: 20px;
   z-index: 6;
@@ -161,7 +164,6 @@ p {
 }
 
 #mailto {
-  
   float: right;
   padding-right: 20px;
 }
@@ -176,7 +178,6 @@ p {
 
 #mailto h2,
 #mailto span {
-
   float: right;
   font-size: 15px;
   margin-top: 40px;
@@ -191,14 +192,14 @@ p {
   margin-top: 7px;
 }
 
-#toggle > h {
+#toggle>h {
   position: absolute;
   font-size: 20px;
   font-weight: 500;
   margin: 7px 0px;
 }
 
-#toggle > h2 {
+#toggle>h2 {
   float: right;
   font-size: 15px;
   font-weight: 300;
@@ -212,8 +213,6 @@ p {
   padding-top: 7px;
   margin-left: 20px;
 }
-
-
 
 .control>h2 {
   float: left;
@@ -260,7 +259,7 @@ input[type=checkbox] {
   background: #ddd;
 }
 
-#controls>input {
+#controls > input {
   margin-left: 20px;
 }
 
@@ -307,15 +306,15 @@ body.calc #loading {
   padding-top: 10px;
   padding-bottom: 10px;
   float: left;
-
+  display: inline-block;
 }
 
 #view {
   padding-top: 10px;
   padding-bottom: 10px;
   height: 38px;
- 
   color: #ddd;
+  display: inline-block;
   float: left;
 }
 
@@ -369,10 +368,9 @@ body.calc #loading {
     border-bottom: solid 1px #3D4452;
     z-index: 9;
   }
-
   .topnav.responsive .control {
     float: left;
- 
+    display: inline-block;
     text-align: left;
     clear: both;
   }
@@ -396,7 +394,7 @@ body.calc #loading {
   right: 0;
   width: 560px;
   max-width: 100%;
-  max-height: 50vh;
+  max-height: 45vh;
   overflow-y: scroll;
   overflow-x: hidden;
   padding-top: 0;
@@ -410,25 +408,28 @@ body.calc #loading {
 }
 
 /* width */
+
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 /* Track */
+
 ::-webkit-scrollbar-track {
-  background: #3D4452; 
+  background: #3D4452;
 }
 
 /* Handle */
+
 ::-webkit-scrollbar-thumb {
-  background: #ddd; 
+  background: #ddd;
 }
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #B6AB72; 
-}
 
+::-webkit-scrollbar-thumb:hover {
+  background: #B6AB72;
+}
 
 #contact-button {
   cursor: pointer;
@@ -652,13 +653,11 @@ body.calc #loading {
 
 .info-left {
   padding-left: 20px;
-
   float: left;
 }
 
 .info-right {
   padding-right: 20px;
-
   float: right;
 }
 
@@ -794,7 +793,6 @@ body.calc #loading {
   }
   .info-right {
     padding-right: 20px;
- 
     float: right;
   }
   .media-wrapper {
@@ -845,16 +843,17 @@ body.calc #loading {
     width: 135px;
   }
 }
+
 @media(max-width: 380px) {
-  #header > a{
+  #header>a {
     text-align: center;
     font-size: 15px;
   }
-  #header{
+  #header {
     height: 70px;
     width: 65px;
   }
-  #header > img{
+  #header>img {
     margin-top: 5px;
   }
 }
@@ -877,6 +876,7 @@ body.calc #loading {
   .aid-label {
     display: none;
   }
+  
 }
 
 @media(max-width: 600px) {
@@ -885,12 +885,68 @@ body.calc #loading {
     padding-left: 0;
   }
 }
-@media(max-width: 500px) {
 
-  #toggle > h2{
+@media(max-width: 500px) {
+  #toggle>h2 {
     font-size: 10px;
     width: 35px;
     text-align: right;
     margin: 7px 0px;
   }
+}
+
+/* The Modal (background) */
+
+.modal {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 11;
+  /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: none;
+  /* Enable scroll if needed */
+  background-color: #1A2A39;
+  /* Fallback color */
+  background-color: rgba(255, 255, 255, 0.2);
+  /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+
+.help-modal-img {
+  background-color: #1A2A39;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  border: 1px solid #ddd;
+  height: 80%;
+  /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+
+#help-modal-close {
+  color: #ddd;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+#help-modal-close:hover,
+#help-modal-close:focus {
+  color: #B6AB72;
+  text-decoration: none;
+  cursor: pointer;
 }

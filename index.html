@@ -74,11 +74,11 @@
 
       <!-- <a href="mailto:someone@yoursite.com?subject=VR%20Connected%20Worlds%20Request"><span class="icon-mailto"></span></a> -->
     <select name="contact" id="contact">
-        <option id="help-option" selected="selected" data-class="cw-help" href="#">Help</option>
-      <option  data-class="cw-mailto" href="mailto:matt.plummer@vuw.ac.nz?subject=VR%20Connected%20Worlds%20Request">Request Addition</option><!-- %0D%0A%0D%0A // linebreak htmlcode -->
-      <option data-class="cw-github" href="https://github.com/axbwh/VR-Network-Vis">Submit Issue</option>
+      <option value="help" data-class="cw-help">Help</option>
+      <option value="mailto" data-class="cw-mailto" href="mailto:matt.plummer@vuw.ac.nz?subject=VR%20Connected%20Worlds%20Request">Request Addition</option><!-- %0D%0A%0D%0A // linebreak htmlcode -->
+      <option value="github" selected="selected" data-class="cw-github" href="https://github.com/axbwh/VR-Network-Vis">Submit Issue</option>
     </select>
-    <div id="help-modal" class="modal"><img class="help-modal-img"></div></div>
+    <div id="help-modal" class="modal"><span class="cw-close" id="help-modal-close"></span><img class="help-modal-img" src="assets/help-modal-img.png"></div></div>
 
  
 

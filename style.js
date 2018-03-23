@@ -21,9 +21,7 @@ function navPadding () {
 	var toggleWidth = $("#toggle").width() + parseInt($("#toggle").css("right"), 10);
     var leftOffset =  (windowWidth-headerWidth)/2;
     
-    if(windowWidth < 425){
 
-    }
 
 	//console.log("| ogNavHeight = " + ogNavHeight + "| headerHeight = " + headerHeight + "| windowWidth = " + windowWidth);
 

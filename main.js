@@ -44,7 +44,9 @@ $(function () {
     var maxLabelWidth = 0;
 
     eles.forEach(function (n) {
-      var labelWidth = n.boundingBox({ includeLabels: true }).w;
+      var labelWidth = n.boundingBox({
+        includeLabels: true
+      }).w;
 
       if (labelWidth > maxLabelWidth) {
         maxLabelWidth = labelWidth;
@@ -57,44 +59,77 @@ $(function () {
 
     var keyBorder = cy.add({
       group: "nodes",
-      data: { id: "keyBorder", type: "border" }
+      data: {
+        id: "keyBorder",
+        type: "border"
+      }
     })
 
     var titleKey = cy.add({
       group: "nodes",
-      data: { id: "titleKey", name: "NODE TYPE", type: "key" }
+      data: {
+        id: "titleKey",
+        name: "NODE TYPE",
+        type: "key"
+      }
     });
 
     var projectKey = cy.add({
       group: "nodes",
-      data: { id: "projectKey", name: "Project", type: "key" }
+      data: {
+        id: "projectKey",
+        name: "Project",
+        type: "key"
+      }
     });
 
     projectKey.addClass("project")
 
     var schoolKey = cy.add({
       group: "nodes",
-      data: { id: "schoolKey", name: "Programme", type: "key" }
+      data: {
+        id: "schoolKey",
+        name: "Programme",
+        type: "key"
+      }
     });
 
     schoolKey.addClass("school")
 
-    var roleKey = cy.add([
-      {
+    var roleKey = cy.add([{
         group: "nodes",
-        data: { id: "schoolKey", name: "Programme", type: "key" }
+        data: {
+          id: "schoolKey",
+          name: "Programme",
+          type: "key"
+        }
       },
       {
         group: "nodes",
-        data: { id: "academicStaffKey", name: "Academic Staff", role: "Academic Staff", type: "key" }
+        data: {
+          id: "academicStaffKey",
+          name: "Academic Staff",
+          role: "Academic Staff",
+          type: "key"
+        }
       },
       {
         group: "nodes",
-        data: { id: "postgradKey", name: "Post-Grad Student", role: "Masters Student", type: "key" }
+        data: {
+          id: "postgradKey",
+          name: "Post-Grad Student",
+          role: "Masters Student",
+          type: "key"
+        }
       },
       {
         group: "nodes",
-        data: { id: "professionalStaff", name: "Professional Staff", role: "Professional Staff", type: "key" }
+        data: {
+          id: "professionalStaff",
+          name: "Professional Staff",
+          role: "Professional Staff",
+          type: "key"
+        }
       }
     ]);
 
@@ -109,17 +144,27 @@ $(function () {
       var maxLabelWidth = getMaxLabelWidth(keys);
       var nodeHeight = keys.height();
       var bboxIgnore = cy.elements('.hidden, .filtered, [type = "key"], [type = "border"]');
-      var bbox = cy.elements().not(bboxIgnore).boundingBox({ includeLabels: true });
+      var bbox = cy.elements().not(bboxIgnore).boundingBox({
+        includeLabels: true
+      });
       var keyNum = keys.size();
       var keysHeight = (nodeHeight * keyNum) + (keyYPadding * (keyNum - 1));
 
       var layout = keys.layout({
         name: 'grid',
         columns: 1,
-        boundingBox: { x1: bbox.x1 - (maxLabelWidth + keyXPadding), y1: bbox.y1 + ((bbox.h - keysHeight) / 2), w: maxLabelWidth, h: keysHeight }
+        boundingBox: {
+          x1: bbox.x1 - (maxLabelWidth + keyXPadding),
+          y1: bbox.y1 + ((bbox.h - keysHeight) / 2),
+          w: maxLabelWidth,
+          h: keysHeight
+        }
       });
 
-      keyBorder.position({ x: bbox.x1 - (maxLabelWidth + keyXPadding) + maxLabelWidth / 2, y: bbox.y1 + ((bbox.h - keysHeight) / 2) + keysHeight / 2 });
+      keyBorder.position({
+        x: bbox.x1 - (maxLabelWidth + keyXPadding) + maxLabelWidth / 2,
+        y: bbox.y1 + ((bbox.h - keysHeight) / 2) + keysHeight / 2
+      });
       keyBorder.style({
         'width': (maxLabelWidth + keyXPadding / 2),
         'height': (keysHeight + keyXPadding / 2),
@@ -223,7 +268,7 @@ $(function () {
   }
 
 
-  function convertMedia(html) {//https://stackoverflow.com/a/22667308
+  function convertMedia(html) { //https://stackoverflow.com/a/22667308
     var pattern1 = /(?:http?s?:\/\/)?(?:www\.)?(?:vimeo\.com)\/?(.+)/g;
     var pattern2 = /(?:http?s?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)/g;
     var pattern3 = /([-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?(?:jpg|jpeg|gif|png))/gi;
@@ -262,7 +307,7 @@ $(function () {
     }
   }
 
-  function infoTitleResize(){
+  function infoTitleResize() {
     var fontsize = $("#toggle h").css('font-size');
     $("#toggle h").css('font-size', 20);
     $("#toggle h").css('font-Weight', 300);
@@ -276,18 +321,19 @@ $(function () {
     var checkboxWidth = $("#toggle .checkbox-round").outerWidth() + parseInt($("#toggle .checkbox-round").css('margin-left'), 10);
     var computedWidth = (toggleWidth - (showinfoWidth + checkboxWidth + 20));
     console.log(`titleWidth = ${titleWidth} | toggleWidth = ${toggleWidth} | showinfoWidth = ${showinfoWidth} | checkboxWidth = ${checkboxWidth} | computedWidth = ${toggleWidth - (showinfoWidth + checkboxWidth)} | `)
-    if( titleWidth > computedWidth ){
+    if (titleWidth > computedWidth) {
       console.log('resize');
       $("#toggle h").css('font-size', 10);
       $("#toggle h").css('font-Weight', 800);
       $("#toggle h").css('letter-spacing', '0.1em');
 
-      for( reWidth = titleWidth; $("#toggle h").height() < $("#toggle h2").height(); reWidth--) {
+      for (reWidth = titleWidth; $("#toggle h").height() < $("#toggle h2").height(); reWidth--) {
         $("#toggle h").css('width', reWidth);
       }
-      
+
     }
   }
+
   function populateHtml(node, callback) {
     var infoTitle = $("#toggle h");
     var infoContainer = $("#infoWrapper .info .container");
@@ -316,7 +362,7 @@ $(function () {
 
     infoTitle.html(node.data('name'));
     infoTitleResize();
-    
+
 
     if (role) {
       infoContainer.append('<div class="info-row"><p class="info-left">Role |</p> <p class ="info-right">' + node.data('role') + '</p></div>');
@@ -505,47 +551,82 @@ $(function () {
           //Highlighted Node Bouding Box Dimension before Being Resized
           var nhoodHeight = nhood.renderedBoundingBox().h;
           var nhoodWidth = nhood.renderedBoundingBox().w;
-
+          console.log(`nhoodHeight = ${nhoodHeight} | nhoodWidth = ${nhoodWidth}`)
           var nhoodRatio = nhoodHeight / nhoodWidth;
 
+          
+
           //Info Window Dimension
-          var infoWidth = $('#infoContainer').width();
-          var infoHeight = $('#infoContainer').height();
+          var infoWidth = $('#infoContainer').outerWidth();
+          var infoHeight = $('#infoContainer').outerHeight();
+
+          if((cyH - infoHeight) > 300){
+            var framePadding = 25;
+          }else if((cyH - infoHeight) > 200){
+              var framePadding = 10;
+          }else{
+            var framePadding = 5;
+          }
 
           //Left Negative Space Dimensions minus Padding
-          var leftWidth = cyW - (infoWidth + layoutPadding * 2);
-          var leftHeight = cyH - (layoutPadding * 2);
+          var leftWidth = cyW - (infoWidth + framePadding * 2);
+          var leftHeight = cyH - (framePadding * 2);
 
           var leftRatio = leftHeight / leftWidth;
 
           //Bottom Negative Space Dimensions minus Padding
-          var bottomWidth = cyW - (layoutPadding * 2);
-          var bottomHeight = cyH - (infoHeight + layoutPadding * 2);
+          var bottomWidth = cyW - (framePadding * 2);
+          var bottomHeight = cyH - (infoHeight + framePadding * 2);
 
           var bottomRatio = bottomHeight / cyW;
 
-          var panOffset = { x: 0, y: 0 };
+          var panOffset = {
+            x: 0,
+            y: 0
+          };
 
           //Check Whether Left or Bottom offer Largest Possible Display Area for Nodes Bounding Box
 
           //Calc area for each alignment
           var alignment = [];
           ////Align Left, Width First // Height First
-          alignment[0] = { placement: 'left', order: 'width', width: leftWidth, height: leftWidth * nhoodRatio }
+          alignment[0] = {
+            placement: 'left',
+            order: 'width',
+            width: leftWidth,
+            height: leftWidth * nhoodRatio
+          }
 
-          alignment[1] = { placement: 'left', order: 'height', width: leftHeight / nhoodRatio, height: leftHeight }
+          alignment[1] = {
+            placement: 'left',
+            order: 'height',
+            width: leftHeight / nhoodRatio,
+            height: leftHeight
+          }
 
 
           ////Align Bottom, Width First // Height First
-          alignment[2] = { placement: 'bottom', order: 'width', width: bottomWidth, height: bottomWidth * nhoodRatio }
+          alignment[2] = {
+            placement: 'bottom',
+            order: 'width',
+            width: bottomWidth,
+            height: bottomWidth * nhoodRatio
+          }
 
-          alignment[3] = { placement: 'bottom', order: 'height', width: bottomHeight / nhoodRatio, height: bottomHeight }
+          alignment[3] = {
+            placement: 'bottom',
+            order: 'height',
+            width: bottomHeight / nhoodRatio,
+            height: bottomHeight
+          }
 
 
 
           alignment.map(ali => ali.area = ali.width * ali.height);
 
-          alignment = _.orderBy(alignment, [function (ali) { return ali.area }], ['desc']);
+          alignment = _.orderBy(alignment, [function (ali) {
+            return ali.area
+          }], ['desc']);
 
           var isAligned = false;
 
@@ -596,17 +677,21 @@ $(function () {
           cy.zoom(newZoom);
           cy.center(nhood);
           var centerPan = Object.assign({}, cy.pan());
-
+          console.log(`cyH = ${cyH} | panOffset.y = ${panOffset.y} | infoHeight = ${infoHeight} | padding = ${framePadding} | curAli.order = ${curAli.order} | curAli.placement = ${curAli.placement} | scaleFactor = ${scaleFactor} `)
+          console.log(`centerPan.y = ${centerPan.y} | nhood.renderbbox.h = ${nhood.renderedBoundingBox().h} | nhood.renderbbox.w = ${nhood.renderedBoundingBox().w}`)
           cy.zoom(ogZoom);
           cy.pan(ogPan);
           cy.pan(centerPan);
 
           cy.stop().animate({ //frames all elements
             zoom: newZoom,
-            pan: { x: centerPan.x + panOffset.x, y: centerPan.y + panOffset.y },
+            pan: {
+              x: centerPan.x + panOffset.x,
+              y: centerPan.y + panOffset.y
+            },
           }, {
-              duration: layoutDuration
-            })
+            duration: layoutDuration
+          })
         } else {
 
           cy.stop().animate({ //frames all elements
@@ -615,8 +700,8 @@ $(function () {
               padding: layoutPadding
             }
           }, {
-              duration: layoutDuration
-            })
+            duration: layoutDuration
+          })
         }
 
 
@@ -624,7 +709,7 @@ $(function () {
     }
   }
 
-  function clear() {//reset layout
+  function clear() { //reset layout
     unspreadNodes();
     cy.elements().removeClass('highlighted').removeClass('faded');
   }
@@ -638,8 +723,8 @@ $(function () {
           padding: layoutPadding
         }
       }, {
-          duration: layoutDuration
-        });
+        duration: layoutDuration
+      });
     }
   }
 
@@ -653,7 +738,9 @@ $(function () {
   function spreadNodes(nodesToSpread) {
 
     nodesToSpread.style({
-      'label': function (ele) { return ele.data('name') }
+      'label': function (ele) {
+        return ele.data('name')
+      }
     })
 
     var nodeNum = nodesToSpread.size();
@@ -677,7 +764,12 @@ $(function () {
     var layout = nodesToSpread.layout({
       name: 'grid',
       columns: nodeNum,
-      boundingBox: { x1: nodeCenter.x - gridWidth / 2, y1: nodeCenter.y - (nodeHeight / 2), w: gridWidth, h: nodeHeight },
+      boundingBox: {
+        x1: nodeCenter.x - gridWidth / 2,
+        y1: nodeCenter.y - (nodeHeight / 2),
+        w: gridWidth,
+        h: nodeHeight
+      },
       avoidOverlap: true,
       avoidOverlapPadding: 0,
       padding: 0,
@@ -692,14 +784,17 @@ $(function () {
       nodesToSpread.forEach(function (n) {
         if (n.data('originPos')) {
           var position = n.data('originPos');
-          n.position({ x: position.x, y: position.y });
+          n.position({
+            x: position.x,
+            y: position.y
+          });
           n.removeData('originPos')
         }
       });
     }
   }
 
-  function circleRadius(collection, nodeSize = 30, padding = 25) {//works out radius for evenly spaced nodes along circumference of circle
+  function circleRadius(collection, nodeSize = 30, padding = 25) { //works out radius for evenly spaced nodes along circumference of circle
     var circum = collection.size() * nodeSize + collection.size() * padding;
     return circum / (2 * Math.PI);
   }
@@ -708,7 +803,10 @@ $(function () {
   function drawProjects() {
     clearStyles();
 
-    cy.nodes().positions({ x: 0, y: 0 });
+    cy.nodes().positions({
+      x: 0,
+      y: 0
+    });
     var elesHide = cy.elements('edge[type = "collab"], [type = "school"]');
     var elesFilter = cy.elements('edge[type = "collab"]');
 
@@ -829,7 +927,10 @@ $(function () {
       y: -50,
     });
 
-    var schoolBB = { w: 0, h: 0 };
+    var schoolBB = {
+      w: 0,
+      h: 0
+    };
     var maxClusterSize = 0;
 
     function spreadSchools(forceRadius) {
@@ -1023,7 +1124,12 @@ $(function () {
           if (person != otherPerson && cy.edges('[id ="' + person.id() + "to" + otherPerson.id() + '"]').size() < 1 && cy.edges('[id ="' + otherPerson.id() + "to" + person.id() + '"]').size() < 1) {
             cy.add({
               group: "edges",
-              data: { id: person.id() + "to" + otherPerson.id(), source: person.id(), target: otherPerson.id(), type: "collab" }
+              data: {
+                id: person.id() + "to" + otherPerson.id(),
+                source: person.id(),
+                target: otherPerson.id(),
+                type: "collab"
+              }
             });
           }
         })
@@ -1034,26 +1140,36 @@ $(function () {
 
   function setLabels() {
     cy.nodes('[type = "person"],[type = "project"],[type = "school"]').style({
-      'label': function (ele) { return ele.data('name') }
+      'label': function (ele) {
+        return ele.data('name')
+      }
     })
 
     cy.nodes('[type = "project"]:unselected').style({
-      'label': function (ele) { return setInitials(ele, 15, 15, 2) }
+      'label': function (ele) {
+        return setInitials(ele, 15, 15, 2)
+      }
     })
 
     cy.nodes('[type = "school"]:unselected').style({
-      'label': function (ele) { return setInitials(ele, 12, 12, 2) }
+      'label': function (ele) {
+        return setInitials(ele, 12, 12, 2)
+      }
     })
 
     if (cy.zoom() < 1.2) {
 
       cy.nodes('[type = "person"]:unselected').style({
-        'label': function (ele) { return setInitials(ele, 6, 6, 1) }
+        'label': function (ele) {
+          return setInitials(ele, 6, 6, 1)
+        }
       })
 
     } else {
       cy.nodes('[type = "person"]:unselected').style({
-        'label': function (ele) { return setInitials(ele, 12, 12, 1) }
+        'label': function (ele) {
+          return setInitials(ele, 12, 12, 1)
+        }
       })
     }
 
@@ -1254,6 +1370,7 @@ $(function () {
   });
 
   $(window).on('resize', _.debounce(function () {
+    selectHelp();
     fitAll();
     clear();
     cy.$(':selected').forEach(highlight);
@@ -1266,26 +1383,34 @@ $(function () {
       "ui-autocomplete": "suggestion-menu",
       "ui-menu-item": "suggestion-item",
     },
-    position: { my: "left bottom", at: "left top", collision: "flip" },
+    position: {
+      my: "left bottom",
+      at: "left top",
+      collision: "flip"
+    },
     source: [''],
   });
 
   $.widget("custom.iconselectmenu", $.ui.selectmenu, {
     _renderItem: function (ul, item) {
       var li = $("<li>"),
-        wrapper = $("<div>", { text: item.label });
+        wrapper = $("<div>", {
+          text: item.label
+        });
 
       $("<span>", {
-        style: item.element.attr("data-style"),
-        "class": item.element.attr("data-class")
-      })
+          style: item.element.attr("data-style"),
+          "class": item.element.attr("data-class")
+        })
         .appendTo(wrapper);
 
       return li.append(wrapper).appendTo(ul);
     },
 
     _renderButtonItem: function (item) {
-      var div = $("<div>", { text: item.label });
+      var div = $("<div>", {
+        text: item.label
+      });
       var buttonItem = $("<span>", {
         style: item.element.attr("data-style"),
         "class": item.element.attr("data-class")
@@ -1297,29 +1422,73 @@ $(function () {
     }
   });
 
-
+  var contactMenuOpen = false;
   $("#contact").iconselectmenu({
-    open: function (event, ui) {
-      $("#autocomplete").autocomplete("close");
-      $("#contactAid").hide();
-      $("#contactAid-label").hide();
-
-    },
-    select: function (event, ui) {
-      var outlink = ui.item.element.attr("href");
-      window.open(outlink);
-    },
-    classes: {
-      "ui-selectmenu-menu": "contact-menu",
-      "ui-selectmenu-open": "contact-menu-open",
-      "ui-menu-item": "contact-item"
-    },
-    position: { my: "left bottom", at: "left top", collision: "flip" }
-  })
+      open: function (event, ui) {
+        $("#autocomplete").autocomplete("close");
+        $("#contactAid").hide();
+        $("#contactAid-label").hide();
+        contactMenuOpen = true;
+      },
+      close: function (event, ui) {
+        contactMenuOpen = false;
+      },
+      select: function (event, ui) {
+        if (contactMenuOpen == true) {
+          if (ui.item.element.attr("value") == 'help') {
+            if ($(window).width() <= 700) {
+              helpModal.style.display = 'block';
+            } else {
+              console.log("show")
+              $(".aid, .aid-label").show();
+            }
+          } else {
+            var outlink = ui.item.element.attr("href");
+            window.open(outlink);
+          }
+        }
+      },
+      classes: {
+        "ui-selectmenu-menu": "contact-menu",
+        "ui-selectmenu-open": "contact-menu-open",
+        "ui-menu-item": "contact-item"
+      },
+      position: {
+        my: "left bottom",
+        at: "left top",
+        collision: "flip"
+      }
+    })
     .iconselectmenu("menuWidget")
     .addClass("ui-menu-icons");
 
+  var helpModal = document.getElementById('help-modal');
+
+  var helpClose = document.getElementById('help-modal-close');
+
+  function selectHelp() {
+    if ($(window).width() <= 700) {
+      $("#contact").val('help')
+      $("#contact").iconselectmenu("refresh");
+    } else {
+      $("#contact").val('github')
+      $("#contact").iconselectmenu("refresh");
+    }
+  }
+
+  selectHelp();
+
+
+
+  $("#help-modal-close").on('click', function () {
+    console.log('run');
+    helpModal.style.display = 'none';
+  });
+
+  $("#help-modal").on('click', function (event) {
+    if (event.target == helpModal) {
+      helpModal.style.display = 'none';
+    }
+  });
+
 });
-
-
-
