@@ -665,7 +665,10 @@ body.calc #loading {
   padding-left: 20px;
   padding-right: 20px;
   display: block;
-  text-align: center;
+  text-align: justify;
+  text-justify: inter-word;
+  -moz-text-align-last: center;
+  text-align-last: center;
   padding-bottom: 8px;
   padding-top: 8px;
   /*float: left;*/
@@ -723,7 +726,7 @@ body.calc #loading {
 
 .aid-label {
   position: fixed;
-  pointer-events: none;
+  /* pointer-events: none; */
   z-index: 8;
   border: solid 1px #B6AB72;
   background: #B6AB72;
@@ -876,6 +879,13 @@ body.calc #loading {
   .aid-label {
     display: none;
   }
+  #contactAid{
+    display: block;
+  }
+  #contactAid-label{
+    display: block;
+  }
+
   
 }
 
@@ -893,60 +903,4 @@ body.calc #loading {
     text-align: right;
     margin: 7px 0px;
   }
-}
-
-/* The Modal (background) */
-
-.modal {
-  display: none;
-  /* Hidden by default */
-  position: fixed;
-  /* Stay in place */
-  z-index: 11;
-  /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%;
-  /* Full width */
-  height: 100%;
-  /* Full height */
-  overflow: none;
-  /* Enable scroll if needed */
-  background-color: #1A2A39;
-  /* Fallback color */
-  background-color: rgba(255, 255, 255, 0.2);
-  /* Black w/ opacity */
-}
-
-/* Modal Content/Box */
-
-.help-modal-img {
-  background-color: #1A2A39;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-  border: 1px solid #ddd;
-  height: 80%;
-  /* Could be more or less, depending on screen size */
-}
-
-/* The Close Button */
-
-#help-modal-close {
-  color: #ddd;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 26px;
-  font-weight: bold;
-}
-
-#help-modal-close:hover,
-#help-modal-close:focus {
-  color: #B6AB72;
-  text-decoration: none;
-  cursor: pointer;
 }

@@ -314,15 +314,12 @@ $(function () {
     $("#toggle h").css('width', 'auto');
     $("#toggle h").css('letter-spacing', '0.04em');
 
-    console.log('alert')
     var titleWidth = $("#toggle h").width();
     var toggleWidth = $("#toggle").outerWidth();
     var showinfoWidth = $("#toggle h2").outerWidth();
     var checkboxWidth = $("#toggle .checkbox-round").outerWidth() + parseInt($("#toggle .checkbox-round").css('margin-left'), 10);
     var computedWidth = (toggleWidth - (showinfoWidth + checkboxWidth + 20));
-    console.log(`titleWidth = ${titleWidth} | toggleWidth = ${toggleWidth} | showinfoWidth = ${showinfoWidth} | checkboxWidth = ${checkboxWidth} | computedWidth = ${toggleWidth - (showinfoWidth + checkboxWidth)} | `)
     if (titleWidth > computedWidth) {
-      console.log('resize');
       $("#toggle h").css('font-size', 10);
       $("#toggle h").css('font-Weight', 800);
       $("#toggle h").css('letter-spacing', '0.1em');
@@ -509,7 +506,6 @@ $(function () {
 
     if ($('#showProjects').prop('checked') == true || $('#showCollab').prop('checked') == true) {
       var nschool = nhood.nodes('[type = "school"]');
-      console.log("spread")
       if (nschool.size() > 1) {
 
         spreadNodes(nschool);
@@ -547,24 +543,22 @@ $(function () {
 
           cy.stop().fit(nhood, 0);
           var fitZoom = cy.zoom();
-
           //Highlighted Node Bouding Box Dimension before Being Resized
           var nhoodHeight = nhood.renderedBoundingBox().h;
           var nhoodWidth = nhood.renderedBoundingBox().w;
-          console.log(`nhoodHeight = ${nhoodHeight} | nhoodWidth = ${nhoodWidth}`)
           var nhoodRatio = nhoodHeight / nhoodWidth;
 
-          
+
 
           //Info Window Dimension
           var infoWidth = $('#infoContainer').outerWidth();
           var infoHeight = $('#infoContainer').outerHeight();
 
-          if((cyH - infoHeight) > 300){
+          if ((cyH - infoHeight) > 300) {
             var framePadding = 25;
-          }else if((cyH - infoHeight) > 200){
-              var framePadding = 10;
-          }else{
+          } else if ((cyH - infoHeight) > 200) {
+            var framePadding = 10;
+          } else {
             var framePadding = 5;
           }
 
@@ -677,8 +671,6 @@ $(function () {
           cy.zoom(newZoom);
           cy.center(nhood);
           var centerPan = Object.assign({}, cy.pan());
-          console.log(`cyH = ${cyH} | panOffset.y = ${panOffset.y} | infoHeight = ${infoHeight} | padding = ${framePadding} | curAli.order = ${curAli.order} | curAli.placement = ${curAli.placement} | scaleFactor = ${scaleFactor} `)
-          console.log(`centerPan.y = ${centerPan.y} | nhood.renderbbox.h = ${nhood.renderedBoundingBox().h} | nhood.renderbbox.w = ${nhood.renderedBoundingBox().w}`)
           cy.zoom(ogZoom);
           cy.pan(ogPan);
           cy.pan(centerPan);
@@ -1266,7 +1258,7 @@ $(function () {
     cy.elements('[type = "school"]').addClass("school");
     cy.elements('[type = "project"]').addClass("project");
 
-    cy.minZoom(0.2);
+    cy.minZoom(0.075);
     cy.maxZoom(maxZoom);
 
 
@@ -1422,12 +1414,18 @@ $(function () {
     }
   });
 
+  $('.aid-label').click(function(){
+    console.log('hiv')
+    var thisLabel = $(this).attr('id').replace('-label', '');
+    $(this).hide()
+    $("#" + thisLabel).hide()
+  })
+
   var contactMenuOpen = false;
   $("#contact").iconselectmenu({
       open: function (event, ui) {
         $("#autocomplete").autocomplete("close");
-        $("#contactAid").hide();
-        $("#contactAid-label").hide();
+        $("#contactAid, #contactAid-label").hide();
         contactMenuOpen = true;
       },
       close: function (event, ui) {
@@ -1437,9 +1435,8 @@ $(function () {
         if (contactMenuOpen == true) {
           if (ui.item.element.attr("value") == 'help') {
             if ($(window).width() <= 700) {
-              helpModal.style.display = 'block';
+              $(".aid, .aid-label").not("#contactAid, #contactAid-label").show();
             } else {
-              console.log("show")
               $(".aid, .aid-label").show();
             }
           } else {
