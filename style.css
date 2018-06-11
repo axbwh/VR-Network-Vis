@@ -1,3 +1,9 @@
+:root {
+  /*  Color variables are defined/set in style.js as the object : colors : {}*/
+  /* They can be called like regular CSS var : colors.colorname --> var(--colorname) */
+  /* For variables nested in objects, simply replace dot notation by dashes : colors.object.colorname --> var(--object-colorname)*/ 
+}
+
 html,
 body {
   font: 14px roboto condensed, helvetica neue, helvetica, arial, sans-serif;
@@ -5,9 +11,12 @@ body {
   height: 100%;
   padding: 0;
   margin: 0;
-  background: #1A2A39;
+  background: var(--bg);
   font-kerning: normal;
 }
+
+
+
 
 em,
 p {
@@ -75,7 +84,7 @@ p {
 }
 
 .id-linked :hover {
-  border-color: #ddd;
+  border-color: var(--fg);
 }
 
 .img-crop {
@@ -86,7 +95,7 @@ p {
   border-top-right-radius: 50% 50%;
   border-bottom-right-radius: 50% 50%;
   border-bottom-left-radius: 50% 50%;
-  border: solid 5px #1A2A39;
+  border: solid 5px var(--bg);
   margin-top: 20px;
   background-size: cover;
   background-position: center;
@@ -131,25 +140,26 @@ p {
   display: inline-block;
   text-align: center;
   font-size: 18px;
-  color: #ddd;
-  background: #1A2A39;
+  color: var(--fg);
+  background: var(--bg);
 }
 
 #header>span {
   display: inline-block;
   text-align: center;
   font-size: 18px;
-  color: #ddd;
-  background: #1A2A39;
+  color: var(--fg);
+  background: var(--bg);
 }
 
-#header>img {
+#logo {
   display: block;
-  font-size: 25px;
-  color: #ddd;
+  font-size: 20px;
+  color: var(--fg);
   margin-top: 10px;
   height: 20px;
   margin-left: calc((100% - ((76.5/35) * 20px))/2);
+  width: fit-content;
 }
 
 #toggle {
@@ -157,7 +167,7 @@ p {
   float: right;
   right: 20px;
   z-index: 6;
-  color: #ddd;
+  color: var(--fg);
   text-transform: uppercase;
   width: 520px;
   top: 10px;
@@ -169,11 +179,11 @@ p {
 }
 
 #mailto {
-  color: #ddd;
+  color: var(--fg);
 }
 
 #mailto:hover {
-  color: #B6AB72;
+  color:  var(--hl);
 }
 
 #mailto h2,
@@ -233,7 +243,7 @@ input[type=checkbox] {
   float: left;
   width: 26px;
   height: 26px;
-  background: #ddd;
+  background: var(--fg);
   margin: 7px 20px;
   border-radius: 100%;
   position: relative;
@@ -251,12 +261,12 @@ input[type=checkbox] {
   top: 3px;
   left: 3px;
   z-index: 10;
-  background: #1A2A39;
+  background: var(--bg);
   /*box-shadow:inset 0px 1px 3px rgba(0,0,0,0.5);*/
 }
 
 .checkbox-round input[type=checkbox]:checked+label {
-  background: #ddd;
+  background: var(--fg);
 }
 
 #controls > input {
@@ -271,7 +281,7 @@ input[type=checkbox] {
   text-align: center;
   margin-top: -0.5em;
   font-size: 2em;
-  color: #ddd;
+  color: var(--fg);
 }
 
 #loading p {
@@ -289,12 +299,12 @@ body.calc #loading {
 .topnav {
   position: relative;
   display: inline-block;
-  background-color: #1A2A39;
-  color: #ddd;
+  background-color: var(--bg);
+  color: var(--fg);
   text-transform: uppercase;
   width: 100%;
   left: 0px;
-  border-bottom: solid 1px #3D4452;
+  border-bottom: solid 1px var(--ll);
 }
 
 .topnav {
@@ -313,7 +323,7 @@ body.calc #loading {
   padding-top: 10px;
   padding-bottom: 10px;
   height: 38px;
-  color: #ddd;
+  color: var(--fg);
   display: inline-block;
   float: left;
 }
@@ -331,25 +341,25 @@ body.calc #loading {
 
 @media screen and (max-width: 700px) {
   .control .checkbox-round {
-    background: #1A2A39;
+    background: var(--bg);
   }
   .control .checkbox-round label {
-    background: #1A2A39;
+    background: var(--bg);
   }
   .control .checkbox-round input[type=checkbox]:checked+label {
-    background: #ddd;
+    background: var(--fg);
   }
   #view:hover {
-    background-color: #ddd;
-    color: #1A2A39;
+    background-color: var(--fg);
+    color: var(--bg);
   }
   #view {
     width: 100%;
   }
   .topnav .control {
     display: none;
-    background-color: #ddd;
-    color: #1A2A39;
+    background-color: var(--fg);
+    color: var(--bg);
     width: 100%;
   }
   .icon {
@@ -365,7 +375,7 @@ body.calc #loading {
   }
   .topnav.responsive {
     position: relative;
-    border-bottom: solid 1px #3D4452;
+    border-bottom: solid 1px var(--ll);
     z-index: 9;
   }
   .topnav.responsive .control {
@@ -400,11 +410,11 @@ body.calc #loading {
   padding-top: 0;
   z-index: 2;
   display: none;
-  border-bottom: solid 1px #3D4452;
-  border-top: solid 1px #3D4452;
-  border-left: solid 1px #3D4452;
-  background-color: #1A2A39;
-  color: #ddd;
+  border-bottom: solid 1px var(--ll);
+  border-top: solid 1px var(--ll);
+  border-left: solid 1px var(--ll);
+  background-color: var(--bg);
+  color: var(--fg);
 }
 
 /* width */
@@ -416,19 +426,19 @@ body.calc #loading {
 /* Track */
 
 ::-webkit-scrollbar-track {
-  background: #3D4452;
+  background: var(--ll);
 }
 
 /* Handle */
 
 ::-webkit-scrollbar-thumb {
-  background: #ddd;
+  background: var(--fg);
 }
 
 /* Handle on hover */
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #B6AB72;
+  background:  var(--hl);
 }
 
 #contact-button {
@@ -438,10 +448,10 @@ body.calc #loading {
   bottom: 20px;
   z-index: 5;
   font: 15px roboto condensed, helvetica neue, helvetica, arial, sans-serif;
-  background-color: #1A2A39;
-  border: solid 1px #3D4452;
+  background-color: var(--bg);
+  border: solid 1px var(--ll);
   padding: 6px 20px;
-  color: #ddd;
+  color: var(--fg);
   width: 150px;
 }
 
@@ -463,26 +473,26 @@ body.calc #loading {
 }
 
 #contact-button::selection {
-  background: #fff;
-  color: #1A2A39;
+  background: var(--fg);
+  color: var(--bg);
 }
 
 #contact-button::-moz-selection {
-  background: #fff;
-  color: #1A2A39;
+  background: var(--fg);
+  color: var(--bg);
 }
 
 #contact-button:focus {
-  outline-color: #ddd;
-  border-color: #ddd;
+  outline-color: var(--fg);
+  border-color: var(--fg);
 }
 
 .contact-menu {
   z-index: 9;
-  /*color: #ddd;*/
+  /*color: var(--fg);*/
   width: 150px;
-  /*  background-color:  #1A2A39;
-  border: solid 1px #3D4452;*/
+  /*  background-color:  var(--bg);
+  border: solid 1px var(--ll);*/
   /*padding: 0px 0px;
   margin : 0px 0px;
   list-style:none;*/
@@ -492,10 +502,10 @@ body.calc #loading {
 #contact-menu {
   cursor: pointer;
   z-index: 9;
-  color: #ddd;
+  color: var(--fg);
   width: 150px;
-  background-color: #1A2A39;
-  border: solid 1px #3D4452;
+  background-color: var(--bg);
+  border: solid 1px var(--ll);
   font: 15px roboto condensed, helvetica neue, helvetica, arial, sans-serif;
   padding: 0px 0px;
   margin: 0px 0px;
@@ -507,16 +517,16 @@ body.calc #loading {
 }
 
 .contact-menu::-webkit-scrollbar-track {
-  background-color: #1A2A39;
+  background-color: var(--bg);
 }
 
 .contact-menu::-webkit-scrollbar {
   width: 12px;
-  background-color: #ddd;
+  background-color: var(--fg);
 }
 
 .contact-menu::-webkit-scrollbar-thumb {
-  background-color: #ddd;
+  background-color: var(--fg);
 }
 
 [class^="cw-"],
@@ -530,10 +540,10 @@ body.calc #loading {
   bottom: 20px;
   z-index: 5;
   font: 15px roboto condensed, helvetica neue, helvetica, arial, sans-serif;
-  background-color: #1A2A39;
-  border: solid 1px #3D4452;
+  background-color: var(--bg);
+  border: solid 1px var(--ll);
   padding: 6px 20px;
-  color: #ddd;
+  color: var(--fg);
   width: 300px;
 }
 
@@ -555,26 +565,26 @@ body.calc #loading {
 }
 
 #autocomplete::selection {
-  background: #fff;
-  color: #1A2A39;
+  background: var(--fg);
+  color: var(--bg);
 }
 
 #autocomplete::-moz-selection {
-  background: #fff;
-  color: #1A2A39;
+  background: var(--fg);
+  color: var(--bg);
 }
 
 #autocomplete:focus {
-  outline-color: #ddd;
-  border-color: #ddd;
+  outline-color: var(--fg);
+  border-color: var(--fg);
 }
 
 .suggestion-menu {
   z-index: 7;
-  color: #ddd;
+  color: var(--fg);
   width: 300px;
-  background-color: #1A2A39;
-  border: solid 1px #3D4452;
+  background-color: var(--bg);
+  border: solid 1px var(--ll);
   padding: 0px 0px;
   margin: 0px 0px;
   list-style: none;
@@ -585,16 +595,16 @@ body.calc #loading {
 }
 
 .suggestion-menu::-webkit-scrollbar-track {
-  background-color: #1A2A39;
+  background-color: var(--bg);
 }
 
 .suggestion-menu::-webkit-scrollbar {
   width: 12px;
-  background-color: #ddd;
+  background-color: var(--fg);
 }
 
 .suggestion-menu::-webkit-scrollbar-thumb {
-  background-color: #ddd;
+  background-color: var(--fg);
 }
 
 .ui-menu-item-wrapper {
@@ -603,8 +613,8 @@ body.calc #loading {
 }
 
 .ui-state-active {
-  color: #1A2A39;
-  background-color: #ddd;
+  color: var(--bg);
+  background-color: var(--fg);
 }
 
 #infoWrapper .info .container {
@@ -615,19 +625,19 @@ body.calc #loading {
 
 #infoWrapper .info .container a {
   text-decoration: none;
-  color: #B6AB72;
+  color:  var(--hl);
   margin-top: 1em;
   margin-bottom: 1em;
 }
 
 #infoWrapper .info .container a:hover {
   text-decoration: none;
-  color: #ddd;
+  color: var(--fg);
 }
 
 #infoWrapper .info .container em {
   text-decoration: none;
-  color: #ddd;
+  color: var(--fg);
   font-style: italic;
   display: block;
   text-align: center;
@@ -648,7 +658,7 @@ body.calc #loading {
   padding-left: 20px;
   padding-right: 20px;
   border-width: 0.5px;
-  border-bottom: solid 0.5px #3D4452;
+  border-bottom: solid 0.5px var(--ll);
 }
 
 .info-left {
@@ -681,23 +691,23 @@ body.calc #loading {
 .img-fit {
   width: 100%;
   max-width: 560px;
-  background-color: #ddd;
+  background-color: var(--fg);
 }
 
 #navbar {
-  border-bottom: solid 1px #3D4452;
+  border-bottom: solid 1px var(--ll);
   height: 58px;
   width: 100%;
-  background-color: #1A2A39;
+  background-color: var(--bg);
   z-index: 2;
 }
 
 #navbar-bottom {
   position: absolute;
-  border-top: solid 1px #3D4452;
+  border-top: solid 1px var(--ll);
   height: 75px;
   width: 100%;
-  background-color: #1A2A39;
+  background-color: var(--bg);
   z-index: 2;
   top: calc(100% - 76px);
 }
@@ -713,7 +723,7 @@ body.calc #loading {
   position: absolute;
   left: 0;
   top: 58px;
-  background: #1A2A39;
+  background: var(--bg);
 }
 
 .aid {
@@ -721,16 +731,16 @@ body.calc #loading {
   pointer-events: none;
   z-index: 7;
   background-color: rgba(0, 0, 0, 0);
-  border: solid 1px #B6AB72;
+  border: solid 1px  var(--hl);
 }
 
 .aid-label {
   position: fixed;
   /* pointer-events: none; */
   z-index: 8;
-  border: solid 1px #B6AB72;
-  background: #B6AB72;
-  color: #1A2A39;
+  border: solid 1px  var(--hl);
+  background:  var(--hl);
+  color: var(--bg);
   text-align: center;
   font-style: italic;
   padding: 10px;
@@ -809,11 +819,11 @@ body.calc #loading {
   #toggle {
     width: calc(100% - 20px - 20px);
     top: 68px;
-    color: #ddd;
+    color: var(--fg);
   }
   #navbar {
     height: 115px;
-    border-bottom: solid 1px #3D4452;
+    border-bottom: solid 1px var(--ll);
   }
   #infoWrapper .info {
     top: 115px;
@@ -856,7 +866,7 @@ body.calc #loading {
     height: 70px;
     width: 65px;
   }
-  #header>img {
+  #logo {
     margin-top: 5px;
   }
 }

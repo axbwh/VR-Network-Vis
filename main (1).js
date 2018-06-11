@@ -11,27 +11,27 @@ $(function () {
   var collProject;
   var collSchool;
   var maxZoom = 3;
-  var nodeTypeList;
 
 
 
   // get exported json from cytoscape desktop via ajax
   var graphP = loadData()
 
+  // var colors = {
+  //   bg =
+  // }
   // also get style via ajax
   var styleP = $.ajax({
     url: 'style.cycss',
     type: 'GET',
     dataType: 'text',
   });
+  
 
-  var colorP = fetch('colors.json').then(resp => resp.json())
-
-
-
+ 
 
   // when both graph export json and style loaded, init cy
-  Promise.all([graphP, styleP, colorP]).then(initCy);
+  Promise.all([graphP, styleP]).then(initCy);
 
   Element.prototype.remove = function () {
     this.parentElement.removeChild(this);
@@ -80,27 +80,69 @@ $(function () {
       }
     });
 
-    var keyAr = []
-    _.forEach(nodeTypeList, (val, key) => {
-      val.forEach(v => {
-        if (!(v == key && val.length > 1)) {
-          keyAr[keyAr.length] = {
-            group: "nodes",
-            data: {
-              id: `${v}-key`,
-              name: v,
-              type: "key",
-              role: v,
-            }
-          }
+    var projectKey = cy.add({
+      group: "nodes",
+      data: {
+        id: "projectKey",
+        name: "Project",
+        type: "key"
+      }
+    });
+
+    projectKey.addClass("project")
+
+    var schoolKey = cy.add({
+      group: "nodes",
+      data: {
+        id: "schoolKey",
+        name: "Programme",
+        type: "key"
+      }
+    });
+
+    schoolKey.addClass("school")
+
+    var roleKey = cy.add([{
+        group: "nodes",
+        data: {
+          id: "schoolKey",
+          name: "Programme",
+          type: "key"
         }
-      })
-    })
-    console.log(keyAr)
-    var roleKey = cy.add(keyAr);
+      },
+      {
+        group: "nodes",
+        data: {
+          id: "academicStaffKey",
+          name: "Academic Staff",
+          role: "Academic Staff",
+          type: "key"
+        }
+      },
+      {
+        group: "nodes",
+        data: {
+          id: "postgradKey",
+          name: "Post-Grad Student",
+          role: "Masters Student",
+          type: "key"
+        }
+      },
+      {
+        group: "nodes",
+        data: {
+          id: "professionalStaff",
+          name: "Professional Staff",
+          role: "Professional Staff",
+          type: "key"
+        }
+      }
+    ]);
+
 
     var keys = cy.elements('[type = "key"]');
     keys.unselectify().ungrabify();
+
     keyBorder.unselectify().ungrabify();
 
     function arrange() {
@@ -122,9 +164,6 @@ $(function () {
           y1: bbox.y1 + ((bbox.h - keysHeight) / 2),
           w: maxLabelWidth,
           h: keysHeight
-        },
-        sort: (a, b) => {
-          return sortBySubType(a, b, nodeTypeList)
         }
       });
 
@@ -809,8 +848,27 @@ $(function () {
       },
       radius: personRadius,
       nodeDimensionsIncludeLabels: false,
-      sort: (a, b) => {
-        return sortBySubType(a, b, nodeTypeList)
+      sort: function (a, b) {
+        var orderA = 0;
+        var orderB = 0;
+
+        if (a.data('role') == 'Academic Staff') {
+          orderA = 1;
+        } else if (a.data('role') == 'Professional Staff') {
+          orderA = 2;
+        } else {
+          orderA = 3;
+        }
+
+        if (b.data('role') == 'Academic Staff') {
+          orderB = 1;
+        } else if (b.data('role') == 'Professional Staff') {
+          orderB = 2;
+        } else {
+          orderB = 3;
+        }
+
+        return orderA - orderB
       },
     });
 
@@ -843,7 +901,7 @@ $(function () {
   function drawSchools() {
     clearStyles();
 
-    var elesHide = cy.edges('[type = "collab"], [type = "school"]');
+    var elesHide = cy.elements('edge[type = "collab"]');
     var elesFilter = cy.elements('[type = "null"]');
 
     var schoolNodes = cy.nodes('[type = "school"]');
@@ -905,8 +963,27 @@ $(function () {
           },
           radius: radius,
           nodeDimensionsIncludeLabels: false,
-          sort: (a, b) => {
-            return sortBySubType(a, b, nodeTypeList)
+          sort: function (a, b) {
+            var orderA = 0;
+            var orderB = 0;
+
+            if (a.data('role') == 'Academic Staff') {
+              orderA = 1;
+            } else if (a.data('role') == 'Professional Staff') {
+              orderA = 2;
+            } else {
+              orderA = 3;
+            }
+
+            if (b.data('role') == 'Academic Staff') {
+              orderB = 1;
+            } else if (b.data('role') == 'Professional Staff') {
+              orderB = 2;
+            } else {
+              orderB = 3;
+            }
+
+            return orderA - orderB
           },
         });
         layout.run();
@@ -1003,8 +1080,27 @@ $(function () {
       padding: layoutPadding,
       radius: circleRadius(people),
       nodeDimensionsIncludeLabels: false,
-      sort: (a, b) => {
-        return sortBySubType(a, b, nodeTypeList)
+      sort: function (a, b) {
+        var orderA = 0;
+        var orderB = 0;
+
+        if (a.data('role') == 'Academic Staff') {
+          orderA = 3;
+        } else if (a.data('role') == 'Professional Staff') {
+          orderA = 2;
+        } else {
+          orderA = 1;
+        }
+
+        if (b.data('role') == 'Academic Staff') {
+          orderB = 3;
+        } else if (b.data('role') == 'Professional Staff') {
+          orderB = 2;
+        } else {
+          orderB = 1;
+        }
+
+        return orderA - orderB
       },
     });
 
@@ -1142,11 +1238,12 @@ $(function () {
   }
 
   function initCy(then) {
+
     var loading = document.getElementById('loading');
     var elements = then[0]
-    var cycss = then[1];
-    var colorList = then[2];
+    var styleJson = then[1];
 
+    styleJson = colorStyleCycss(styleJson)
 
     let defaultZoom = 1
 
@@ -1155,38 +1252,19 @@ $(function () {
 
     var cy = window.cy = cytoscape({
       container: document.getElementById('cy'),
+      style: styleJson,
       elements: elements,
       motionBlur: true,
       selectionType: 'single',
       boxSelectionEnabled: false,
       wheelSensitivity: 0.5,
     })
-    //temp {
-    var styleMaster = {
-      colorScheme: 3,
-      ringNodes: [
-        'project',
-        'school',
-      ],
-      nodeOverride: [{
-          label: "Post-grad Student",
-          subtypes: ["Honours Student", "Masters Student", "Phd Student"],
-          color: '1'
-        },
-        {
-          label: "Programme",
-          subtypes: ["school"],
-          color: '2'
-        }
-      ]
-    }
-    // } temp
-
-    nodeTypeList = parseNodeTypeList(cy.nodes());
-    cy.style(styleCy(nodeTypeList, cycss, colorList, styleMaster))
 
     addCollab();
     addKey();
+
+    cy.elements('[type = "school"]').addClass("school");
+    cy.elements('[type = "project"]').addClass("project");
 
     cy.minZoom(0.075);
     cy.maxZoom(maxZoom);
@@ -1344,7 +1422,8 @@ $(function () {
     }
   });
 
-  $('.aid-label').click(function () {
+  $('.aid-label').click(function(){
+    console.log('hiv')
     var thisLabel = $(this).attr('id').replace('-label', '');
     $(this).hide()
     $("#" + thisLabel).hide()
@@ -1407,6 +1486,7 @@ $(function () {
 
 
   $("#help-modal-close").on('click', function () {
+    console.log('run');
     helpModal.style.display = 'none';
   });
 

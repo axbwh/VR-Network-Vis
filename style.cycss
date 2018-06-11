@@ -1,3 +1,8 @@
+/*  Color variables are defined/set in style.js as the object : colors : {}*/
+/* They can be called like regular CSS var : colors.colorname --> var(--colorname) */
+/* For variables nested in objects, simply replace dot notation by dashes : colors.object.colorname --> var(--object-colorname)*/ 
+/* the function to edit this stylesheet with actual colorvalues ( colorStyleCycss() ) is called before cytoscape init in initCy() function*/
+
 .filtered {
 	display: none;
 	events : no;
@@ -5,7 +10,7 @@
 
 
 core {
-	active-bg-color: #fff;
+	active-bg-color: var(--fg);
 	active-bg-opacity: 0.333;
 }
 
@@ -18,45 +23,21 @@ edge {
 	/*line-style: dotted;*/
 	/*haystack-radius: 0;*/
 	opacity: 0.2;
-	line-color: #fff;
+	line-color: var(--fg);
 	width: 1;
 	z-index: 0;
 	overlay-opacity: 0;
-
+	line-style: solid;
 }
 
-edge.school {
-	line-color: #B6AB72;
-	line-style: solid;
-	z-index: 2;
-	opacity: 0;
-}
-
-
-
-edge[type = "collab"] {
-	opacity: 0.2;
-	line-color: #78909C;
-	line-style: solid;
-	z-index: 1;
-}
-
-
-
-
-edge.project{
-	line-color: #287777;
-	line-style: solid;
-	opacity: 0.25;
-
+edge.curved{
 	curve-style: unbundled-bezier;
 	control-point-distances: 20;
 	control-point-weight:0.75;
 	edge-distances : node-position;
 	target-endpoint : outside-to-line;
 	source-endpoint : outside-to-line;
-
-}
+} 
 
 node {
 	text-transform: uppercase;
@@ -74,79 +55,52 @@ node {
 	text-valign: center;
 	text-halign: center;
 
-	color: #fff;
-	background-color: #4A3247;
+	color: var(--fg);
+	background-color: var(--hl);
 
 	text-outline-width: 1;
-	text-outline-color: #1A2A39;
+	text-outline-color: var(--bg);
 	text-outline-opacity: 1;
-	overlay-color: #fff;
+	overlay-color: var(--fg);
 	border-opacity : 1;
 }
 
+/*type
 
-node[role = "Academic Staff"] {
-background-color: #287777;
+node[var(--selector) = "var(--typename)"] {
+	background-color: var(--nodecolor);
+	border-color: var(--nodecolor);
 }
 
-node[role = "Honours Student"] {
-background-color: #4A3247;
-background-color: #4489A3;
+edge[var(--selector) = "var(--typename)"] {
+	line-color: var(--nodecolor);	
+	z-index: var(--zindex);
+	opacity: 0.25;
+}
+	
+type*/
+
+
+
+/*ring
+node[var(--selector) = "var(--typename)"]{
+shape : ellipse;
+text-margin-y : 1px;
+font-weight: 300;
+font-style: normal;
+text-outline-width: 2;
+background-color: var(--bg);
+text-valign: center;
+background-opacity : 1;
+border-width: 2px;
 }
 
-node[role = "PhD Student"] {
-background-color: #B6AB72;
-background-color: #4489A3;
-}
-
-node[role = "Masters Student"] {
-background-color: #4489A3;
-}
-
-node[role = "Professional Staff"] {
-background-color: #1B4966;
-}
-
-
-node.school {
-
-	shape : ellipse;
-	text-margin-y : 1px;
-	font-weight: 300;
-	font-style: normal;
-	text-outline-width: 2;
-
-	text-valign: center;
-
-	background-color: #1A2A39;
+node[var(--selector) = "var(--typename)"].faded{
+	opacity : 1;
 	background-opacity : 1;
-	border-width: 2px;
-	border-color: #B6AB72;
-
-	width: 30;
-	height: 30;
+	border-opacity : 0.5;
 }
-
-
-node.project {
-	shape : ellipse;
-	text-margin-y : 1px;
-	font-weight: 300;
-	font-style: normal;
-	text-outline-width: 2;
-
-	text-valign: center;
-
-	background-color: #1A2A39;
-	background-opacity : 1;
-	border-width: 2px;
-	border-color: #287777;
-
-	width: 30;
-	height: 30;
-}
-
-
+ring*/
 
 
 node[type = "center"] {
@@ -162,20 +116,6 @@ node.faded {
 	text-opacity: 0;
 }
 
-node.school.faded {
-opacity : 1;
-background-opacity : 1;
-border-opacity : 0.5;
-}
-
-node.project.faded {
-opacity : 1;
-background-opacity : 1;
-border-opacity : 0.5;
-
-}
-
-
 node[type = "center"].faded {
 opacity :0;
 }
@@ -188,7 +128,7 @@ node.highlighted {
     	text-outline-width: 2;
     	text-outline-opacity: 1;
     	z-index: 6;
-    	line-color: #fff;
+    	line-color: var(--fg);
     	opacity : 1;
     	border-opacity : 1;
 }
@@ -203,7 +143,7 @@ node.hover-hood {
 node:selected {
 	width: 30;
 	height: 30;
-	border-color: #fff;
+	border-color: var(--fg);
 	border-opacity: 1;
 	border-width: 2px;
 	opacity : 1;
@@ -213,25 +153,12 @@ node:selected {
 
  node.hover {
  text-opacity: 1;
-	border-color: #fff;
+	border-color: var(--fg);
 	border-width: 2px;
 	text-outline-width: 2;
 	font-size: 16;
 	z-index : 8;
 
-}
-
-/* node[type = "school"].hover {
-	border-color: #fff;
-	border-width: 8px;
-}
-
- node[type = "school"]:selected {
-	border-width: 8px;
-}*/
-
-edge[type = "school"].faded{
-	opacity : 0;
 }
 
 node[type = "key"]{
@@ -256,13 +183,13 @@ edge.hover-hood {
 
 edge.hover-hood[type = "collab"] {
 	opacity: 1;
-	line-color: #78909C;
-	z-index: 4;
+	line-color: var(--fg);
+	z-index: 10;
 }
 
 edge.highlighted[type = "collab"] {
 	opacity: 1;
-	line-color: #ECEFF1;
+	line-color: var(--fg);
 }
 
 #titleKey {
@@ -272,7 +199,7 @@ edge.highlighted[type = "collab"] {
 	text-margin-y : 15px;
 
 	border-width: 0px;
-	background-color: #1A2A39;
+	background-color: var(--bg);
 	text-valign: top;
  }
 
@@ -280,7 +207,7 @@ edge.highlighted[type = "collab"] {
  events : no;
  	shape: rectangle;
  	border-width : 0.5px;
- 	border-color : #ddd;
+ 	border-color : var(--fg);
  	background-opacity : 0;
  	text-opacity : 0;
 
