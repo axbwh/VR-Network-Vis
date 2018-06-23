@@ -162,6 +162,8 @@ node:selected {
 }
 
 node[type = "key"]{
+	opacity: 1;
+	text-opacity: 1;
 	events : no;
 }
 

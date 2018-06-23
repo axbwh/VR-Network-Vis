@@ -7,26 +7,35 @@ String.prototype.replaceAll = function (search, replacement) {
     return target.split(search).join(replacement);
 };
 
-String.prototype.insertBefore = function(strToFind, strToInsert) {
+String.prototype.insertBefore = function (strToFind, strToInsert) {
     var target = this;
     var n = target.lastIndexOf(strToFind);
     if (n < 0) return target;
-    return target.substring(0,n) + strToInsert + target.substring(n);    
+    return target.substring(0, n) + strToInsert + target.substring(n);
 }
 
 String.prototype.replaceSelector = function (selStr, typeStr, colStr, zStr) {
     var target = this;
     return target.replaceAll('var(--selector)', selStr).replaceAll('var(--typename)', typeStr).replaceAll('var(--nodecolor)', colStr).replaceAll('var(--zindex)', zStr)
-}; 
+};
 
 String.prototype.isHexColor = function () {
     var target = this;
     return /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(target);
 };
 
+Number.prototype.isHexColor = function () {
+    var target = this;
+    return target.toString().isHexColor()
+};
+
 String.prototype.isNumber = function () {
     var target = this;
     return !isNaN(parseInt(target));
+};
+
+Number.prototype.isNumber = function () {
+    return true
 };
 
 Array.prototype.curbIndex = function (index) {
@@ -39,6 +48,32 @@ Array.prototype.caseIndexOf = function (query) {
     return target.findIndex(item => query.toLowerCase() === item.toLowerCase());
 };
 
+Array.prototype.containsAny = function (query) {
+    var target = this;
+    return query.some(function (v) {
+        return target.caseIndexOf(v) >= 0;
+    });
+};
+
+Array.prototype.containsType = function (query) {
+    var target = this
+    return target.some(oride => oride.subtype.caseIndexOf(query) > -1)
+}
+
+Array.prototype.returnByType = function (query) {
+    var target = this
+    return target.find(or => {
+        return or.subtype.caseIndexOf(query) > -1
+    })
+}
+
+Array.prototype.substractArray = function (query) {
+    var target = this
+    return target.filter(elem => {
+        return query.indexOf(elem) < 0
+    })
+}
+
 Array.prototype.unique = function () {
     var target = this;
     return target.filter(function (x, i) {
@@ -48,12 +83,12 @@ Array.prototype.unique = function () {
 
 function parseNodeTypeList(data) {
     var typ = data.map(a => a.data('type')).unique()
-    var subTypes = {};
-    typ.forEach(tp => subTypes[tp] = data.map(a => {
-        var subtype = a.nodes(`[type = "${tp}"]`).data('role') 
-        return subtype != undefined ? subtype : tp 
+    var subType = {};
+    typ.forEach(tp => subType[tp] = data.map(a => {
+        var subtype = a.nodes(`[type = "${tp}"]`).data('role')
+        return subtype != undefined ? subtype : tp
     }).unique())
-    return subTypes
+    return subType
 }
 
 function sortBySubType(a, b, nodeType) {
@@ -87,65 +122,157 @@ function sortBySubType(a, b, nodeType) {
 
 
 
-function styleCy(nodeType, data, colList, styleList){  
-    colSchm = colList[styleList.colorScheme]
-    nodeAr = Object.keys(nodeType)
+function styleCy(nodeType, data, colList, styleList) {
+    var colSchm = colList[styleList.colorScheme]
+    var typeAr = Object.keys(nodeType)
 
-    Object.keys(colSchm).forEach( value => {        
-        if(colSchm[value].constructor !== Array){
+    var subAr = {
+        type: _.flatMap(nodeType, (val, key) => {
+            return _.map(val, v => {
+                return key
+            })
+        }),
+        subtype: _.flatMap(nodeType)
+    }
+
+    Object.keys(colSchm).forEach(value => {
+        if (colSchm[value].constructor !== Array) {
             $(":root").get(0).style.setProperty('--' + value.replaceAll('.', '-'), colSchm[value])
             data = data.replaceAll('var(--' + value.replaceAll('.', '-') + ')', colSchm[value])
         }
     })
 
+    var colNum = {
+        type: _.map(colSchm.node, (val, index) => {
+            return index
+        }),
+        subtype: _.map(colSchm.node, (val) => {
+            return _.map(val, (v, ind) => {
+                return ind
+            })
+        })
+    }
+
+    var colNumOride = { // arrays of types and subtypes indicies that have been override
+        type: [],
+        subtype: colSchm.node.slice().fill([])
+    }
+
+    var nodeStyles = {
+        type: [],
+        subtype: []
+    }
+
+    // copy all existing node styling override for Types into nodeStyles.type, 
+    // fill colNumOride with type indices that have been override
+    styleList.nodeOverride.forEach(oride => {
+        if (oride.subtype.containsAny(typeAr)) {
+            nodeStyles.type[nodeStyles.type.length] = oride
+            if (oride.color.isNumber()) {
+                nodeStyles.type[nodeStyles.type.length - 1].color = parseInt(oride.color)
+                colNumOride.type[colNumOride.type.length] = oride.color
+            }
+        }
+    })
+
+
+    // assign new node styling override into nodeStyles.type for remaining types, 
+    // and reassigns index for faulty "color" fields (empty, not a number/valid hexvalue)
+    typeAr.forEach((key, index) => {
+        var typeOride = nodeStyles.type.returnByType(key)
+        var availColNum = colNum.type.substractArray(colNumOride.type)
+
+        if (typeOride) {
+            if ((!typeOride.color.isHexColor() && !typeOride.color.isNumber()) || (typeOride.color.isNumber() && typeOride.color >= colNum.type.length)) {
+                nodeStyles.type.returnByType(key).color = availColNum.length > 0 ? availColNum[0] : colNum.type[0]
+                colNumOride.type[colNumOride.type.length] = availColNum[0]
+            }
+        }
+
+        if (!typeOride) {
+            nodeStyles.type[nodeStyles.type.length] = {
+                label: key,
+                subtype: [key],
+                color: availColNum.length > 0 ? availColNum[0] : colNum.type[0],
+            }
+            colNumOride.type[colNumOride.type.length] = availColNum[0]
+        }
+
+    })
+
+    // allow for quick lookup of what the assigned color is for the type containing a subtype
+    function getTypeBySub(subtype) {
+        return nodeStyles.type.returnByType(subAr.type[subAr.subtype.caseIndexOf(subtype)])
+    };
+
+    // copy all existing node styling override for subtypes into nodeStyles.subtype, 
+    // fill corresponding subtypeArrays in colNumOride with subtype indices that have been override
+    styleList.nodeOverride.forEach(oride => {
+        if (oride.subtype.containsAny(subAr.subtype) && !oride.subtype.containsAny(typeAr)) {
+            nodeStyles.subtype[nodeStyles.subtype.length] = oride
+            if (oride.color.isNumber() && getTypeBySub(oride.subtype[0]).color.isNumber()) {
+                nodeStyles.subtype[nodeStyles.subtype.length - 1].color = parseInt(oride.color)
+                colNumOride.subtype[getTypeBySub(oride.subtype[0]).color][colNumOride.subtype.length] = oride.color
+            }
+        }
+    })
+
+    // assign new node styling override into nodeStyles.type for remaining types, 
+    // and reassigns index for faulty "color" fields (empty, not a number/valid hexvalue)
+    subAr.subtype.forEach((subName, index) => {
+        var typeOfSub = getTypeBySub(subName)
+        var typeColOfSub = typeOfSub.color
+        var typeOride = nodeStyles.subtype.returnByType(subName)
+        if (typeColOfSub.isNumber()) {
+            var availColNum = colNum.subtype[typeColOfSub].substractArray(colNumOride.subtype[typeColOfSub])
+        }
+
+        if (!typeOride) {
+            nodeStyles.subtype[nodeStyles.subtype.length] = {
+                label: subName,
+                subtype: [subName],
+                color: availColNum ? availColNum.length > 0 ? availColNum[0] : colNum.subtype[typeColOfSub][0] : typeColOfSub,
+                shape: typeOfSub.shape ? typeOfSub.shape : 'circle',
+            }
+            if (availColNum) {
+                colNumOride.subtype[typeColOfSub][colNumOride.subtype[typeColOfSub].length] = availColNum[0]
+            }
+        }
+
+        if (typeOride) {
+            if (availColNum) {
+                if ((!typeOride.color.isHexColor() && !typeOride.color.isNumber()) || (typeOride.color.isNumber() && typeOride.color >= colNum.subtype[typeColOfSub].length)) {
+                    nodeStyles.subtype.returnByType(subName).color = availColNum.length > 0 ? availColNum[0] : colNum.subtype[typeColOfSub][0]
+                    colNumOride.subtype[typeColOfSub][colNumOride.subtype[typeColOfSub].length] = availColNum[0]
+                }
+            } else if (!typeOride.color.isHexColor()) {
+                nodeStyles.subtype.returnByType(subName).color = typeColOfSub
+            }
+            nodeStyles.subtype.returnByType(subName).shape = typeOfSub.shape ? typeOfSub.shape : 'circle'
+        }
+    })
+
     typeString = data.split('/*type').pop().split('type*/').shift()
     ringString = data.split('/*ring').pop().split('ring*/').shift()
-    console.log(ringString)
     var beforeStr = "/*ring"
     var styleString = ""
-
-    // var styleOride 
-
-    nodeAr.forEach((key, index) => {
-        var typeOride = styleList.nodeOverride.find( oride => {
-            return oride.subtypes.caseIndexOf(key) > -1
+    //Assign default styling for all nodes of a certain type
+    nodeStyles.type.forEach(style => {
+        var styleString = style.shape === 'ring' ? (typeString + ringString) : typeString
+        style.subtype.forEach(subName => {
+            var nodeColor = style.color.isNumber() ? colSchm.node[style.color][0] : style.color 
+            data = data.insertBefore(beforeStr, styleString.replaceSelector('type', subName, nodeColor, typeAr.caseIndexOf(subName) + 1))
+            
         })
-
-        var type = typeOride && typeOride.color.isNumber() ? colSchm.node.curbIndex(typeOride.color) : colSchm.node.curbIndex(index)
-        var typeCol = typeOride && typeOride.color.isHexColor() ? typeOride.color : type[0]
-        if(typeOride){
-            console.log(typeOride.color.isHexColor())        
-        }
-        // debugger
-        
-        styleString = styleList.ringNodes.indexOf(key) > -1 ? (typeString + ringString) : typeString
-        
-        data = data.insertBefore(beforeStr, styleString.replaceSelector('type', key, typeCol, index + 1))
-        
-        nodeType[key].forEach( (val, ind) => {
-
-            var subOride = styleList.nodeOverride.find( oride => {
-                return oride.subtypes.caseIndexOf(val) > -1
-            })
-            console.log(`val = ${val} ^^ subOride = ${subOride}`)
-
-            var subCol = typeOride && typeOride.color.isHexColor() ? typeCol : subOride && subOride.color.isNumber() ? type.curbIndex(subOride.color) : subOride && subOride.color.isHexColor() ? subOride.color : type.curbIndex(ind)
-
-            styleString = styleList.ringNodes.indexOf(val) > -1 ? (typeString + ringString) : typeString
-
-            data = data.insertBefore(beforeStr, styleString.replaceSelector('role', val, subCol,index + 1))
-        // console.log(`typeOride.color`)
-        // console.log(typeOride.color)
-        // console.log(`typeCol`)
-        // console.log(typeCol)
-        
-        // if(subOride){
-        // console.log(`subOride.color`)
-        // console.log(subOride.color)
-        // console.log(`subCol`)
-        // console.log(subCol)
-        // debugger
-        // }
+    })
+    //Assign further styling override for nodes of certain role(subtype)
+    nodeStyles.subtype.forEach(style => {
+        var styleString = style.shape === 'ring' ? (typeString + ringString) : typeString
+        style.subtype.forEach(subName => {
+            var typeStyle = getTypeBySub(subName)
+            var nodeColor = typeStyle.color.isNumber() && style.color.isNumber() ? colSchm.node[typeStyle.color][style.color] : style.color.isHexColor() ? style.color : typeStyle.color
+            data = data.insertBefore(beforeStr, styleString.replaceSelector('role', subName, nodeColor, typeAr.caseIndexOf(typeStyle.subtype[typeStyle.subtype.length - 1]) + 1))
+            
         })
     })
     return data

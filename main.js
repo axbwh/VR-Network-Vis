@@ -1163,20 +1163,29 @@ $(function () {
     })
     //temp {
     var styleMaster = {
-      colorScheme: 3,
-      ringNodes: [
-        'project',
-        'school',
-      ],
+      colorScheme: 2,
       nodeOverride: [{
-          label: "Post-grad Student",
-          subtypes: ["Honours Student", "Masters Student", "Phd Student"],
-          color: '1'
+        //   label: "Post-grad Student",
+        //   subtype: ["Honours Student", "Masters Student", "PhD Student"],
+        //   color: '1'
+        // },
+        // {
+          label: "Programme",
+          subtype: ["school"],
+          color: '',
+          shape:'ring'
         },
         {
-          label: "Programme",
-          subtypes: ["school"],
-          color: '2'
+          label: "Person",
+          subtype: ["person"],
+          color: '1',
+          shape: ''
+        },
+        {
+          label: "Project",
+          subtype: ["project"],
+          color:'',
+          shape: 'ring'
         }
       ]
     }
