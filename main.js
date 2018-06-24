@@ -11,7 +11,7 @@ $(function () {
   var collProject;
   var collSchool;
   var maxZoom = 3;
-  var nodeTypeList;
+  var styleList;
 
 
 
@@ -81,22 +81,34 @@ $(function () {
     });
 
     var keyAr = []
-    _.forEach(nodeTypeList, (val, key) => {
-      val.forEach(v => {
-        if (!(v == key && val.length > 1)) {
+    var subKeyStyles = []
+    var keyStyles = _.filter(styleList.nodeStyles.type, typ => {
+      var subKeyAr = _.filter(styleList.nodeStyles.subtype, styp => { 
+        return styp.type.toLowerCase() === typ.label.toLowerCase() && _.intersection(styp.subtype, typ.subtype).length < 1
+      })
+      if(subKeyAr.length > 1){
+        subKeyStyles = subKeyStyles.concat(subKeyAr)
+        return false
+      }else{
+        return true
+      }
+    })
+
+    keyStyles = keyStyles.concat(subKeyStyles)
+    
+
+    keyStyles.forEach(stl => {
           keyAr[keyAr.length] = {
             group: "nodes",
             data: {
-              id: `${v}-key`,
-              name: v,
+              id: `${stl.label}-key`,
+              name: stl.label,
               type: "key",
-              role: v,
+              role: stl.subtype[0],
             }
           }
-        }
-      })
     })
-    console.log(keyAr)
+
     var roleKey = cy.add(keyAr);
 
     var keys = cy.elements('[type = "key"]');
@@ -124,7 +136,7 @@ $(function () {
           h: keysHeight
         },
         sort: (a, b) => {
-          return sortBySubType(a, b, nodeTypeList)
+          return sortBySubType(a, b, styleList)
         }
       });
 
@@ -810,7 +822,7 @@ $(function () {
       radius: personRadius,
       nodeDimensionsIncludeLabels: false,
       sort: (a, b) => {
-        return sortBySubType(a, b, nodeTypeList)
+        return sortBySubType(a, b, styleList)
       },
     });
 
@@ -906,7 +918,7 @@ $(function () {
           radius: radius,
           nodeDimensionsIncludeLabels: false,
           sort: (a, b) => {
-            return sortBySubType(a, b, nodeTypeList)
+            return sortBySubType(a, b, styleList)
           },
         });
         layout.run();
@@ -1004,7 +1016,7 @@ $(function () {
       radius: circleRadius(people),
       nodeDimensionsIncludeLabels: false,
       sort: (a, b) => {
-        return sortBySubType(a, b, nodeTypeList)
+        return sortBySubType(a, b, styleList)
       },
     });
 
@@ -1164,22 +1176,27 @@ $(function () {
     //temp {
     var styleMaster = {
       colorScheme: 2,
-      nodeOverride: [{
-        //   label: "Post-grad Student",
-        //   subtype: ["Honours Student", "Masters Student", "PhD Student"],
-        //   color: '1'
-        // },
-        // {
-          label: "Programme",
-          subtype: ["school"],
-          color: '',
-          shape:'ring'
-        },
+      fg:'',
+      bg:'',
+      hl:'',
+      ll:'',
+      nodeOverride: [
         {
           label: "Person",
           subtype: ["person"],
           color: '1',
           shape: ''
+        },
+        {
+          label: "Post-grad Student",
+          subtype: ["Honours Student", "Masters Student", "PhD Student"],
+          color: ''
+        },
+        {
+          label: "Programme",
+          subtype: ["school"],
+          color: '',
+          shape:'ring'
         },
         {
           label: "Project",
@@ -1191,8 +1208,8 @@ $(function () {
     }
     // } temp
 
-    nodeTypeList = parseNodeTypeList(cy.nodes());
-    cy.style(styleCy(nodeTypeList, cycss, colorList, styleMaster))
+    styleList = parseStyles(cy.nodes(), colorList, styleMaster, cycss);
+    cy.style(styleList.stylesheet)
 
     addCollab();
     addKey();

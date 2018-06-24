@@ -81,49 +81,15 @@ Array.prototype.unique = function () {
     })
 }
 
-function parseNodeTypeList(data) {
-    var typ = data.map(a => a.data('type')).unique()
-    var subType = {};
-    typ.forEach(tp => subType[tp] = data.map(a => {
+function parseStyles(allNodes, colorList, styleList, data) {
+    var typ = allNodes.map(a => a.data('type')).unique()
+    var nodeType = {};
+    typ.forEach(tp => nodeType[tp] = allNodes.map(a => {
         var subtype = a.nodes(`[type = "${tp}"]`).data('role')
         return subtype != undefined ? subtype : tp
     }).unique())
-    return subType
-}
 
-function sortBySubType(a, b, nodeType) {
-    // objects with no role properties (Key Label, Bbox) placed first
-    if (!a.data().hasOwnProperty('role') || !b.data().hasOwnProperty('role')) {
-        return !a.data('role') ? -1 : 1
-    } else {
-        var typeAr = Object.keys(nodeType)
-        var atype = a.data('type');
-        var btype = b.data('type');
-        //to maintain ordering per type > per subtype, for nodes of type=key, assign mock types
-        if (a.data("type") == "key") {
-            atype = typeAr.indexOf(a.data('role')) > -1 ? typeAr.indexOf(a.data('role')) : atype
-            btype = typeAr.indexOf(b.data('role')) > -1 ? typeAr.indexOf(b.data('role')) : btype
-            typeAr.forEach(val => {
-                atype = nodeType[val].indexOf(a.data('role')) > -1 ? val : atype
-                btype = nodeType[val].indexOf(b.data('role')) > -1 ? val : btype
-            })
-        }
-
-        if (atype !== btype) {
-            var orderA = typeAr.indexOf(atype)
-            var orderB = typeAr.indexOf(btype)
-        } else {
-            var orderA = nodeType[atype].indexOf(a.data('role'));
-            var orderB = nodeType[atype].indexOf(b.data('role'));
-        }
-        return orderA - orderB
-    }
-}
-
-
-
-function styleCy(nodeType, data, colList, styleList) {
-    var colSchm = colList[styleList.colorScheme]
+    var colSchm = colorList[styleList.colorScheme]
     var typeAr = Object.keys(nodeType)
 
     var subAr = {
@@ -134,13 +100,6 @@ function styleCy(nodeType, data, colList, styleList) {
         }),
         subtype: _.flatMap(nodeType)
     }
-
-    Object.keys(colSchm).forEach(value => {
-        if (colSchm[value].constructor !== Array) {
-            $(":root").get(0).style.setProperty('--' + value.replaceAll('.', '-'), colSchm[value])
-            data = data.replaceAll('var(--' + value.replaceAll('.', '-') + ')', colSchm[value])
-        }
-    })
 
     var colNum = {
         type: _.map(colSchm.node, (val, index) => {
@@ -175,7 +134,6 @@ function styleCy(nodeType, data, colList, styleList) {
         }
     })
 
-
     // assign new node styling override into nodeStyles.type for remaining types, 
     // and reassigns index for faulty "color" fields (empty, not a number/valid hexvalue)
     typeAr.forEach((key, index) => {
@@ -200,6 +158,7 @@ function styleCy(nodeType, data, colList, styleList) {
 
     })
 
+
     // allow for quick lookup of what the assigned color is for the type containing a subtype
     function getTypeBySub(subtype) {
         return nodeStyles.type.returnByType(subAr.type[subAr.subtype.caseIndexOf(subtype)])
@@ -217,7 +176,7 @@ function styleCy(nodeType, data, colList, styleList) {
         }
     })
 
-    // assign new node styling override into nodeStyles.type for remaining types, 
+    // assign new node styling override into nodeStyles.subtype for remaining subtypes, 
     // and reassigns index for faulty "color" fields (empty, not a number/valid hexvalue)
     subAr.subtype.forEach((subName, index) => {
         var typeOfSub = getTypeBySub(subName)
@@ -234,6 +193,11 @@ function styleCy(nodeType, data, colList, styleList) {
                 color: availColNum ? availColNum.length > 0 ? availColNum[0] : colNum.subtype[typeColOfSub][0] : typeColOfSub,
                 shape: typeOfSub.shape ? typeOfSub.shape : 'circle',
             }
+
+            if (typeAr.caseIndexOf(subName) > -1) {
+                nodeStyles.subtype[nodeStyles.subtype.length - 1].color = typeOfSub.color.isHexColor() ? typeOfSub.color : colNum.subtype[typeColOfSub][0]
+            }
+
             if (availColNum) {
                 colNumOride.subtype[typeColOfSub][colNumOride.subtype[typeColOfSub].length] = availColNum[0]
             }
@@ -250,7 +214,28 @@ function styleCy(nodeType, data, colList, styleList) {
             }
             nodeStyles.subtype.returnByType(subName).shape = typeOfSub.shape ? typeOfSub.shape : 'circle'
         }
+
+        nodeStyles.subtype.returnByType(subName).type = typeOfSub.label
+
     })
+
+
+    console.log(nodeStyles)
+    var cssColors = {
+        fg: styleList.fg.isHexColor() ? styleList.fg : colSchm.fg,
+        bg: styleList.bg.isHexColor() ? styleList.bg : colSchm.bg,
+        hl: styleList.hl.isHexColor() ? styleList.hl : colSchm.hl,
+        ll: styleList.ll.isHexColor() ? styleList.ll : colSchm.ll,
+    }
+
+    // Styles Css 
+    Object.keys(cssColors).forEach(value => {
+        if (cssColors[value].constructor !== Array) {
+            $(":root").get(0).style.setProperty('--' + value.replaceAll('.', '-'), cssColors[value])
+            data = data.replaceAll('var(--' + value.replaceAll('.', '-') + ')', cssColors[value])
+        }
+    })
+    //
 
     typeString = data.split('/*type').pop().split('type*/').shift()
     ringString = data.split('/*ring').pop().split('ring*/').shift()
@@ -260,11 +245,12 @@ function styleCy(nodeType, data, colList, styleList) {
     nodeStyles.type.forEach(style => {
         var styleString = style.shape === 'ring' ? (typeString + ringString) : typeString
         style.subtype.forEach(subName => {
-            var nodeColor = style.color.isNumber() ? colSchm.node[style.color][0] : style.color 
+            var nodeColor = style.color.isNumber() ? colSchm.node[style.color][0] : style.color
             data = data.insertBefore(beforeStr, styleString.replaceSelector('type', subName, nodeColor, typeAr.caseIndexOf(subName) + 1))
-            
+
         })
     })
+
     //Assign further styling override for nodes of certain role(subtype)
     nodeStyles.subtype.forEach(style => {
         var styleString = style.shape === 'ring' ? (typeString + ringString) : typeString
@@ -272,11 +258,50 @@ function styleCy(nodeType, data, colList, styleList) {
             var typeStyle = getTypeBySub(subName)
             var nodeColor = typeStyle.color.isNumber() && style.color.isNumber() ? colSchm.node[typeStyle.color][style.color] : style.color.isHexColor() ? style.color : typeStyle.color
             data = data.insertBefore(beforeStr, styleString.replaceSelector('role', subName, nodeColor, typeAr.caseIndexOf(typeStyle.subtype[typeStyle.subtype.length - 1]) + 1))
-            
+
         })
     })
-    return data
+
+    return {
+        stylesheet: data,
+        nodeStyles: nodeStyles
+    }
 }
+
+function sortBySubType(a, b, styleList) {
+    var subStyles = styleList.nodeStyles.subtype
+    var typeStyles = styleList.nodeStyles.type
+    var typeAr = _.map(typeStyles, typ => typ.label)
+    var subAr = _.map(subStyles, typ => typ.label)
+    var atype = a.data('type') ? _.find(typeStyles, typ => typ.subtype.caseIndexOf(a.data('type')) > -1) : undefined
+    var btype = b.data('type') ? _.find(typeStyles, typ => typ.subtype.caseIndexOf(b.data('type')) > -1) : undefined
+    var aStyle = a.data('role') ? _.find(subStyles, typ => typ.subtype.caseIndexOf(a.data('role')) > -1) : undefined
+    var bStyle = b.data('role') ? _.find(subStyles, typ => typ.subtype.caseIndexOf(b.data('role')) > -1) : undefined
+
+    //to maintain ordering per type > per subtype, for nodes of type=key, assign mock types
+    if ( aStyle && bStyle && a.data("type") == "key") {
+        atype = typeAr.caseIndexOf(aStyle.type) > -1 ? _.find(typeStyles, typ => typ.label == aStyle.type) : atype
+        btype = typeAr.caseIndexOf(bStyle.type) > -1 ?  _.find(typeStyles, typ => typ.label == bStyle.type) : btype
+    }
+
+    // objects with no role properties (Key Label, Bbox) placed first
+    if (!atype || !btype) {
+        return  -1
+    } else {
+        if ((!aStyle || !bStyle) || (atype !== btype)) {
+            var orderA = atype.color.isHexColor() ? typeAr.caseIndexOf(atype.label) + 10 : atype.color
+            var orderB = atype.color.isHexColor() ? typeAr.caseIndexOf(btype.label) + 10 : btype.color
+        } else {
+            var orderA = aStyle.color.isHexColor() ? subAr.caseIndexOf(aStyle.label) + 10 : aStyle.color
+            var orderB = bStyle.color.isHexColor() ? subAr.caseIndexOf(bStyle.label) + 10: bStyle.color
+        }
+        return orderA - orderB
+    }
+}
+
+
+
+
 
 let isPlainObj = (o) => Boolean(
     o && o.constructor && o.constructor.prototype && o.constructor.prototype.hasOwnProperty("isPrototypeOf")
