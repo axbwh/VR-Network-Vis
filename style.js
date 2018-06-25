@@ -299,48 +299,6 @@ function sortBySubType(a, b, styleList) {
     }
 }
 
-
-
-
-
-let isPlainObj = (o) => Boolean(
-    o && o.constructor && o.constructor.prototype && o.constructor.prototype.hasOwnProperty("isPrototypeOf")
-)
-
-let flattenObj = (obj, keys = []) => {
-    return Object.keys(obj).reduce((acc, key) => {
-        return Object.assign(acc, isPlainObj(obj[key]) ?
-            flattenObj(obj[key], keys.concat(key)) : {
-                [keys.concat(key).join(".")]: obj[key]
-            }
-        )
-    }, {})
-}
-
-// function colorStyleCss() {
-//     _.forEach(flattenObj(colors), function (value, key) {
-//         if (value.constructor !== Array) {
-//             $(":root").get(0).style.setProperty('--' + key.replaceAll('.', '-'), value)
-//         }
-//     })
-// }
-
-
-// function colorStyleCycss(data) {
-//     _.forEach(flattenObj(colors), function (value, key) {
-//         if (value.constructor === Array) {
-//             _.forEach(value[0], function (val, ke) { // here key is 
-//                 data += `node[role = "${ke}"] {
-//                     background-color: ${val};
-//                     }`
-//             })
-//         } else {
-//             data = data.replaceAll('var(--' + key.replaceAll('.', '-') + ')', value)
-//         }
-//     })
-//     return data
-// }
-
 function navbarCollapse() {
     var x = document.getElementById("controls");
     var y = document.getElementById("view");
@@ -361,6 +319,5 @@ function navPadding() {
     var leftOffset = (windowWidth - headerWidth) / 2;
 }
 
-//colorStyleCss()
 navPadding();
 $(window).on('resize', navPadding);

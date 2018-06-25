@@ -1,7 +1,9 @@
 :root {
-  /*  Color variables are defined/set in style.js as the object : colors : {}*/
-  /* They can be called like regular CSS var : colors.colorname --> var(--colorname) */
-  /* For variables nested in objects, simply replace dot notation by dashes : colors.object.colorname --> var(--object-colorname)*/ 
+  /*  Color variables are set in style.js according to selected color scheme; which are listed in colors.json*/
+  /*  var(--bg) : background color*/
+  /*  var(--fg) : foreground color : text, tickboxes, logo etc*/
+  /*  var(--hl) : highlight color : tooltip, html links, scrollbar hover etc*/
+  /*  var(--ll) : lowlight color : greyed out text, dropshadows, scrollbar track etc*/
 }
 
 html,
@@ -14,9 +16,6 @@ body {
   background: var(--bg);
   font-kerning: normal;
 }
-
-
-
 
 em,
 p {
